@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIR="$(dirname "$CURRENT_DIR")"
 
+source "$ROOT_DIR/helpers.sh"
+source "$ROOT_DIR/variables.sh"
 source "$CURRENT_DIR/helpers.sh"
-source "$CURRENT_DIR/variables.sh"
-source "$CURRENT_DIR/window_helpers.sh"
 
 window_exists() {
     local window_id="$(window_id)"

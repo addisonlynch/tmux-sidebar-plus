@@ -1,5 +1,5 @@
 window_key(){
-    get_tmux_option "$WINDOW_OPTION" "$WINDOW_KEY"
+    get_tmux_option "$WINDOW_KEY_OPTION" "$WINDOW_KEY"
 }
 
 window_id(){

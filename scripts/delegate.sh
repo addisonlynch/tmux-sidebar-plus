@@ -2,20 +2,29 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+
 # ensure that an argument was passed
-if [ $# -ne 1 ]; then
-    echo "Script requires 1 argument"
+if [ $# -ne 2 ]; then
+    echo "Script requires 2 arguments"
     exit 1
 fi
 
 ARG="$1"
+PANE_ID="$2"
 
-case "${ARG}" in
-    'o')
-            bash "$CURRENT_DIR/window.sh"
-            ;;
-    *)
-            echo "enter valid command"
-            exit 1
-esac
-
+main(){
+    case "${ARG}" in
+        'o')
+                bash "$CURRENT_DIR/window/window.sh"
+                return
+                ;;
+        'p')
+                bash "$CURRENT_DIR/sidebar/toggle.sh" "${PANE_ID}"
+                return
+                ;;
+        *)
+                echo "enter valid command"
+                return 1
+    esac
+}
+main
