@@ -18,7 +18,7 @@ main(){
                 bash "$CURRENT_DIR/window/window.sh"
                 return
                 ;;
-        'p')
+        'b')
                 bash "$CURRENT_DIR/sidebar/toggle.sh" "${PANE_ID}"
                 return
                 ;;

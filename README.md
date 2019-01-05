@@ -1,14 +1,45 @@
 # tmux-monitor
 
-``tmux-monitor`` is a [tmux](https://github.com/tmux/tmux) plugin that enables
-spawning of a window or sidebar which monitors system status
+``tmux-monitor`` is a [tmux](https://github.com/tmux/tmux) plugin that enables one-touch system status monitoring for Linux/macOS/Windows systems.
+
+## Features
+
+Two convenient commands are provided:
+
+**Sidebar** - built on [tmux-sidebar](https://github.com/tmux-plugins/tmux-sidebar), the system information sidebar is available through the command ``C-o`` by default
+
+**Spawnable Window** - adds a ``system-monitor`` window to any session which uses Glances, [htop](https://hisham.hm/htop/), or ``top``.
+
+## How It Works
+
+``tmux-system-monitor`` uses [Glances](https://nicolargo.github.io/glances/) to spawn a window or sidebar which helps monitor your computer.
+
+## Installation
+
+### Manual Installation
+
+Clone the repo:
+
+```
+$ git clone https://github.com/addisonlynch/tmux-system-monitor ~/clone/path
+```
+
+Add this line to the bottom of ``.tmux.conf``:
+
+```
+$ run-shell ~/clone/path/system-monitor.tmux
+```
+
+Reload tmux environment
+
+```
+$ tmux source-file ~/.tmux.conf
+```
+
+## Configuration
 
 
-# The Best Way: Glances
-
-[Glances]()
-
-# Recommended Prerequisites
-
-* NetHogs
-* htop
+| option | default | description    |
+|-------|------|---|
+| ``@tmux-monitor-toggle-window-key``  | p | Set window toggle key |
+| ``@tmux-monitor-toggle-sidebar-key``  | o | Set sidebar toggle key |

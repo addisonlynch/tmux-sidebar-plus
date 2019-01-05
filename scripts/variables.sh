@@ -12,7 +12,7 @@ GITPLUS_DIR="$HOME/.tmux/git-monitor"
 WINDOW_ID="toggle-monitor"
 WINDOW_ID_OPTION="window-id"
 
-WINDOW_KEY="o"
+WINDOW_KEY="b"
 WINDOW_KEY_OPTION="toggle-window"
 
 WINDOW_COMMAND=""
@@ -30,4 +30,4 @@ SIDEBAR_ID_OPTION="sidebar-id"
 REGISTERED_PANE_PREFIX="@-sidebar-registered-pane"
 REGISTERED_SIDEBAR_PREFIX="@-sidebar-is-sidebar"
 
-MINIMUM_WIDTH_FOR_SIDEBAR="71"
+MINIMUM_WIDTH_FOR_SIDEBAR="80"

@@ -9,7 +9,7 @@ source "$CURRENT_DIR/helpers.sh"
 
 ARGS=""
 PANE_ID="$1"
-COMMAND="ls -al"
+COMMAND='top -c | sh -c "LESS= less --dumb --chop-long-lines --tilde --IGNORE-CASE --RAW-CONTROL-CHARS"'
 POSITION="left"   # "right"
 
 PANE_WIDTH="$(get_pane_info "$PANE_ID" "#{pane_width}")"
@@ -23,6 +23,11 @@ sidebar_exists() {
     local pane_id="$(sidebar_pane_id)"
     tmux list-panes -F "#{pane_id}" 2>/dev/null |
         \grep -q "^${pane_id}$"
+}
+
+sidebar_pane_id() {
+    sidebar_registration |
+        cut -d',' -f1
 }
 
 current_pane_too_narrow() {
@@ -94,6 +99,17 @@ split_sidebar_right() {
     tmux split-window -h -l "$sidebar_size" -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}" "$COMMAND"
 }
 
+kill_sidebar() {
+    # get data before killing the sidebar
+    local sidebar_pane_id="$(sidebar_pane_id)"
+    # kill the sidebar
+    tmux kill-pane -t "$sidebar_pane_id"
+
+
+    PANE_WIDTH="$new_current_pane_width"
+}
+
+
 create_sidebar() {
     local position="$1" # left / right
     local sidebar_id="$(split_sidebar_${position})"
@@ -104,7 +120,7 @@ create_sidebar() {
 }
 
 toggle_sidebar() {
-    if has_sidebar; then
+    if sidebar_exists; then
         kill_sidebar
         # if using different sidebar command automatically open a new sidebar
         # if registration_not_for_the_same_command; then
