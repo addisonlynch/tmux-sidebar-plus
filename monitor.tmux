@@ -8,6 +8,7 @@ source "$SCRIPTS_DIR/variables.sh"
 source "$SCRIPTS_DIR/window/helpers.sh"
 source "$SCRIPTS_DIR/sidebar/helpers.sh"
 
+
 set_default_key_options() {
     local window_key="$(window_key)"
     local sidebar_key="$(sidebar_key)"

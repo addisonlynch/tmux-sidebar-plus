@@ -1,19 +1,27 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT_DIR="$(dirname "$CURRENT_DIR")"
+SCRIPTS_DIR="$(dirname "$CURRENT_DIR")"
 
-source "$ROOT_DIR/helpers.sh"
-source "$ROOT_DIR/variables.sh"
+source "$SCRIPTS_DIR/helpers.sh"
+source "$SCRIPTS_DIR/variables.sh"
 source "$CURRENT_DIR/helpers.sh"
 
 ARGS=""
 PANE_ID="$1"
-COMMAND='top -c | sh -c "LESS= less --dumb --chop-long-lines --tilde --IGNORE-CASE --RAW-CONTROL-CHARS"'
+LAYOUT="$CURRENT_DIR/layouts/$2"
+COMMAND='bash -i'
+
+source "$LAYOUT" # this can't be safe to do
+
 POSITION="left"   # "right"
 
 PANE_WIDTH="$(get_pane_info "$PANE_ID" "#{pane_width}")"
 PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
+
+select_base_pane() {
+    tmux select-pane -t "${PANE_ID}"
+}
 
 sidebar_registration() {
     get_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}" ""
@@ -48,7 +56,7 @@ has_sidebar() {
 
 exit_if_pane_too_narrow() {
     if current_pane_too_narrow; then
-        display_message "Pane too narrow for the sidebar"
+        echo "Pane too narrow for the sidebar"
         exit
     fi
 }
@@ -57,8 +65,24 @@ register_sidebar() {
     # Stores the sidebar data as tmux options
     #
     local sidebar_id="$1"
+    # register the sidebar to the original pane
     set_tmux_option "${REGISTERED_SIDEBAR_PREFIX}-${sidebar_id}" "$PANE_ID"
-    set_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}" "${sidebar_id},${ARGS}"
+    # registers the main pane of the sidebar to the sidebar
+    set_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}" "${sidebar_id}"
+    # initialize the sidebar panes list
+    set_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_id}" ""
+}
+
+register_pane() {
+    local sidebar_id="$1"
+    local pane_id="$2"
+    local option="${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_id}"
+    local panes_list="$(get_tmux_option "${option}" "")"
+    if [ -n $panes_list ]; then
+        panes_list+=" "
+    fi
+    panes_list+="${pane_id}"
+    set_tmux_option $option "${panes_list}"
 }
 
 desired_sidebar_size() {
@@ -94,7 +118,6 @@ split_sidebar_left() {
 }
 
 split_sidebar_right() {
-    echo "HELLO"
     local sidebar_size=$(desired_sidebar_size)
     tmux split-window -h -l "$sidebar_size" -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}" "$COMMAND"
 }
@@ -102,11 +125,26 @@ split_sidebar_right() {
 kill_sidebar() {
     # get data before killing the sidebar
     local sidebar_pane_id="$(sidebar_pane_id)"
+    # kill the sidebar's nested panes
+    kill_child_panes
     # kill the sidebar
     tmux kill-pane -t "$sidebar_pane_id"
-
-
     PANE_WIDTH="$new_current_pane_width"
+}
+
+kill_child_panes() {
+    local cp="$(get_child_panes)"
+    local child_panes=($cp)
+    for child_pane in "${child_panes[@]}"; do
+        tmux kill-pane -t $child_pane
+    done
+
+}
+
+get_child_panes() {
+    local sidebar_pane_id="$(sidebar_pane_id)"
+    local child_panes="$(get_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_pane_id}" "")"
+    echo $child_panes
 }
 
 
@@ -114,13 +152,15 @@ create_sidebar() {
     local position="$1" # left / right
     local sidebar_id="$(split_sidebar_${position})"
     register_sidebar "$sidebar_id"
-    if no_focus; then
-        tmux last-pane
-    fi
+    tmux last-pane
+    populate_sidebar "$sidebar_id"
+    # if no_focus; then
+    #     tmux last-pane
+    # fi
 }
 
 toggle_sidebar() {
-    if sidebar_exists; then
+    if has_sidebar; then
         kill_sidebar
         # if using different sidebar command automatically open a new sidebar
         # if registration_not_for_the_same_command; then

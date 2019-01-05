@@ -1,0 +1,23 @@
+LAYOUT_NAME="git"
+PANES=3
+
+populate_sidebar(){
+    local sidebar_id="$1"
+    tmux select-pane -t "$sidebar_id"
+
+    # Build & register panes
+    local pane_1_id="$(tmux new-window -P -F "#{pane_id}" "$COMMAND")"
+    tmux join-pane -v -p 50 -t "$sidebar_id" -s "$pane_1_id"
+    register_pane $sidebar_id $pane_1_id
+
+    local pane_2_id="$(tmux new-window -P -F "#{pane_id}" "$COMMAND")"
+    tmux join-pane -h -p 50 -t "$pane_1_id" -s "$pane_2_id"
+    register_pane $sidebar_id $pane_2_id
+
+    # Run panes' commands
+    tmux send-keys -t $sidebar_id "top -c" Enter
+    tmux send-keys -t $pane_1_id "ls -al" Enter
+    tmux send-keys -t $pane_2_id "ls -al" Enter
+
+    select_base_pane
+}

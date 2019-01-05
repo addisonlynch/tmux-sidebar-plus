@@ -1,0 +1,22 @@
+LAYOUT_NAME="git"
+PANES=1
+COMMAND='bash -i'
+
+populate_sidebar() {
+    local sidebar_id="$1"
+    tmux select-pane -t "$sidebar_id"
+
+    p1c="ls -al; bash -i"
+    local pane_1_id="$(tmux new-window -P -F "#{pane_id}" "$p1c")"
+    tmux join-pane -v -p 50 -t "$sidebar_id" -s "$pane_1_id"
+    register_pane $sidebar_id $pane_1_id
+
+
+    p2c="pwd; bash -i"
+    local pane_2_id="$(tmux new-window -P -F "#{pane_id}" "$p2c")"
+    tmux join-pane -h -p 50 -t "$pane_1_id" -s "$pane_2_id"
+
+    register_pane $sidebar_id $pane_2_id
+    select_base_pane
+
+}
