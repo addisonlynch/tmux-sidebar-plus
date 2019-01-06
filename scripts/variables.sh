@@ -15,8 +15,9 @@ WINDOW_ID_OPTION="window-id"
 WINDOW_KEY="o"
 WINDOW_KEY_OPTION="toggle-window"
 
-WINDOW_COMMAND=""
-WINDOW_COMMAND_OPTION="window-command-before"
+REGISTERED_WINDOW_PANE_PREFIX="@-window-registered-pane"
+REGISTERED_WINDOW_PREFIX="@-window-is-window"
+WINDOW_PANES_LIST_PREFIX="@-window-panes-window"
 
 ###########
 # Sidebar #
@@ -29,30 +30,19 @@ SIDEBAR_ID_OPTION="sidebar-id"
 
 REGISTERED_PANE_PREFIX="@-sidebar-registered-pane"
 REGISTERED_SIDEBAR_PREFIX="@-sidebar-is-sidebar"
+
+
 SIDEBAR_PANES_LIST_PREFIX="@-sidebar-panes-sidebar"
 
-MINIMUM_WIDTH_FOR_SIDEBAR="80"
+MINIMUM_WIDTH_FOR_SIDEBAR="40"
 
 ##########
 # CONFIG #
 ##########
 
-# Git
-declare -A GIT_CONFIG
+declare -A DIRECTION
 
-LAYOUT='1'
-PAGE="no"
-WATCH="yes"
-COMMAND_1='top -c'
-COMMAND_2='git status'
-COMMAND_3='git log --all --decorate --oneline --graph'
-
-
-###########
-# LAYOUTS #
-###########
-
-# Layout 1
-declare -A LAYOUT_1
-LAYOUT_1["panes"]=3
-LAYOUT_1=
+DIRECTION=(
+    [horizontal]="-h"
+    [vertical]="-v"
+)

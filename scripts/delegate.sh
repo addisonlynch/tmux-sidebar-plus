@@ -16,11 +16,11 @@ LAYOUT="$3"
 main(){
     case "${ARG}" in
         'o')
-                bash "$CURRENT_DIR/window/window.sh"
+                bash "$CURRENT_DIR/window/window.sh" "${PANE_ID}" "git"
                 return
                 ;;
         'b')
-                bash "$CURRENT_DIR/sidebar/toggle.sh" "${PANE_ID}" "${LAYOUT}"
+                bash "$CURRENT_DIR/sidebar/toggle.sh" "${PANE_ID}" "git"
                 return
                 ;;
         *)

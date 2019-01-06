@@ -2,6 +2,7 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SCRIPTS_DIR="$(dirname "$CURRENT_DIR")"
+ROOT_DIR="$(dirname "$SCRIPTS_DIR")"
 
 source "$SCRIPTS_DIR/helpers.sh"
 source "$SCRIPTS_DIR/variables.sh"
@@ -9,7 +10,7 @@ source "$CURRENT_DIR/helpers.sh"
 
 ARGS=""
 PANE_ID="$1"
-LAYOUT="$CURRENT_DIR/layouts/$2"
+LAYOUT="$ROOT_DIR/layouts/$2"
 COMMAND='bash -i'
 
 source "$LAYOUT" # this can't be safe to do
@@ -19,9 +20,6 @@ POSITION="left"   # "right"
 PANE_WIDTH="$(get_pane_info "$PANE_ID" "#{pane_width}")"
 PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
 
-select_base_pane() {
-    tmux select-pane -t "${PANE_ID}"
-}
 
 sidebar_registration() {
     get_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}" ""
@@ -186,6 +184,16 @@ execute_command_from_main_pane() {
 current_pane_is_sidebar() {
     local var="$(get_tmux_option "${REGISTERED_SIDEBAR_PREFIX}-${PANE_ID}" "")"
     [ -n "$var" ]
+}
+
+split() {
+    # simple splitter for either horizontal or vertical
+    local pane_id="$1"
+    local direction="${DIRECTION["$2"]}"
+
+    local new_pane_id="$(tmux new-window -P -F "#{pane_id}" "$COMMAND")"
+    tmux join-pane "$direction" -p 50 -t "$pane_id" -s "$new_pane_id"
+    echo $new_pane_id
 }
 
 main() {

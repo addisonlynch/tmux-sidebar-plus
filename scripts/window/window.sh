@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT_DIR="$(dirname "$CURRENT_DIR")"
+SCRIPTS_DIR="$(dirname "$CURRENT_DIR")"
+ROOT_DIR="$(dirname "$SCRIPTS_DIR")"
 
-source "$ROOT_DIR/helpers.sh"
-source "$ROOT_DIR/variables.sh"
+source "$SCRIPTS_DIR/helpers.sh"
+source "$SCRIPTS_DIR/variables.sh"
 source "$CURRENT_DIR/helpers.sh"
+
+PANE_ID="$1"
+LAYOUT="$ROOT_DIR/layouts/$2"
+COMMAND="bash -i"
+
+source "$LAYOUT" # this can't be safe to do
 
 window_exists() {
     local window_id="$(window_id)"
@@ -20,47 +27,8 @@ kill_window() {
 
 create_window() {
     local window_id="$(window_id)"
-    tmux new-window -d -n "${window_id}" || return 1
-}
-
-populate_window() {
-    local window_id="$(window_id)"
-    local window_command_before="$(window_command_before)"
-
-    # run shell_command_before
-    tmux select-window -t "${window_id}"
-    tmux send-keys "${window_command_before}" Enter
-
-    # check if glance exists
-    if glances_installed; then
-        populate_window_glances
-    elif htop_installed; then
-        populate_window_htop
-    else
-        populate_window_top
-    fi
-}
-
-populate_window_glances() {
-    local window_id="$(window_id)"
-    tmux select-window -t "${window_id}"
-    tmux send-keys -t "${window_id}" "glances" Enter
-}
-
-populate_window_top() {
-    local window_id="$(window_id)"
-    tmux select-window -t "${window_id}"
-    tmux send-keys -t "${window_id}" "top" Enter
-}
-
-populate_window_htop() {
-    local window_id="$(window_id)"
-    tmux select-window -t "${window_id}"
-    tmux send-keys -t "${window_id}" "htop" Enter
-}
-
-run_commands() {
-    tmux send-keys -t 5 "top" Enter
+    tmux new-window -d -n "${window_id}"
+    populate_window "$(window_id)"
 }
 
 main() {
@@ -68,7 +36,6 @@ main() {
         kill_window
     else
         create_window
-        populate_window
     fi
 }
 main

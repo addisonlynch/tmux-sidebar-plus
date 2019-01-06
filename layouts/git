@@ -1,0 +1,40 @@
+LAYOUT_NAME="git"
+PANES=3
+MINIMUM_WIDTH="80"
+
+populate_sidebar(){
+    local sidebar_id="$1"
+    tmux select-pane -t "$sidebar_id"
+
+    # Build & register panes
+    local pane_1_id="$(split "${sidebar_id}" "vertical")"
+    register_pane $sidebar_id $pane_1_id
+
+    local pane_2_id="$(split "${pane_1_id}" "horizontal")"
+    register_pane $sidebar_id $pane_2_id
+
+    # Run panes' commands
+    tmux send-keys -t $sidebar_id "top -c" Enter
+    watched_dir_command $pane_1_id "git status"
+    watched_dir_command $pane_2_id "git log --all --decorate --oneline --graph"
+    select_base_pane
+}
+
+populate_window() {
+    local window_id="$1"
+    tmux select-window -t "${window_id}"
+
+    # Build & register panes
+    local pane_1_id="$(split "%0" "vertical")"
+    register_pane $sidebar_id $pane_1_id
+
+    local pane_2_id="$(split "${pane_1_id}" "horizontal")"
+    register_pane $sidebar_id $pane_2_id
+
+    # Run panes' commands
+    tmux send-keys -t $sidebar_id "top -c" Enter
+    watched_dir_command $pane_1_id "git status"
+    watched_dir_command $pane_2_id "git log --all --decorate --oneline --graph"
+}
+
+

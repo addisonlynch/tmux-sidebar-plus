@@ -75,3 +75,15 @@ get_pane_info() {
         \grep "$pane_id" |
         cut -d',' -f2-
 }
+
+watched_dir_command() {
+    local target="$1"
+    local command="$2"
+
+   # bash "${command_prefix} 'bash $CURRENT_DIR/update_dir.sh '${PANE_ID}' '{TARGET}' 'COMMAND'"
+    tmux send-keys -t $target "$SCRIPTS_DIR/update_dir.sh '${PANE_ID}' '${TARGET}' '${command}'" Enter
+}
+
+select_base_pane() {
+    tmux select-pane -t "${PANE_ID}"
+}
