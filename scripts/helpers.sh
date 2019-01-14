@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 ######################
 # GET/SET tmux options
 
@@ -19,6 +20,22 @@ set_tmux_option() {
     local option=$1
     local value=$2
     tmux set-option -gq "$option" "$value"
+}
+
+sidebar_key(){
+    get_tmux_option "$SIDEBAR_KEY_OPTION" "$SIDEBAR_KEY"
+}
+
+window_key(){
+    get_tmux_option "$WINDOW_KEY_OPTION" "$WINDOW_KEY"
+}
+
+window_id(){
+    get_tmux_option "$WINDOW_ID_OPTION" "$WINDOW_ID"
+}
+
+window_command_before() {
+    get_tmux_option "$WINDOW_COMMAND_OPTION" "$WINDOW_COMMAND"
 }
 
 ######################
@@ -62,7 +79,7 @@ _get_digits_from_string() {
 
 tmux_version_int() {
     local tmux_version_string=$(tmux -V)
-    echo "$(_get_digits_from_string "$tmux_version_string")"
+    _get_digits_from_string "$tmux_version_string"
 }
 
 ###########
@@ -80,8 +97,7 @@ watched_dir_command() {
     local target="$1"
     local command="$2"
 
-   # bash "${command_prefix} 'bash $CURRENT_DIR/update_dir.sh '${PANE_ID}' '{TARGET}' 'COMMAND'"
-    tmux send-keys -t $target "$SCRIPTS_DIR/update_dir.sh '${PANE_ID}' '${TARGET}' '${command}'" Enter
+    tmux send-keys -t "${target}" "$CURRENT_DIR/update_dir.sh '${PANE_ID}' '${target}' '${command}'" Enter
 }
 
 select_base_pane() {

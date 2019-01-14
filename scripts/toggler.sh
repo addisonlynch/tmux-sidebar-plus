@@ -1,25 +1,36 @@
 #!/usr/bin/env bash
 
+# ensure that an argument was passed
+if [ $# -ne 3 ]; then
+    echo "Script requires 3 arguments"
+    exit 1
+fi
+
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SCRIPTS_DIR="$(dirname "$CURRENT_DIR")"
-ROOT_DIR="$(dirname "$SCRIPTS_DIR")"
+ROOT_DIR="$(dirname "$CURRENT_DIR")"
 
-source "$SCRIPTS_DIR/helpers.sh"
-source "$SCRIPTS_DIR/variables.sh"
 source "$CURRENT_DIR/helpers.sh"
+source "$CURRENT_DIR/variables.sh"
 
-ARGS=""
-PANE_ID="$1"
-LAYOUT="$ROOT_DIR/layouts/$2"
+
+ARG="$1"
+PANE_ID="$2"
+LAYOUT="$ROOT_DIR/layouts/$3"
 COMMAND='bash -i'
 
-source "$LAYOUT" # this can't be safe to do
+source "${LAYOUT}" # this can't be safe to do
 
 POSITION="left"   # "right"
 
 PANE_WIDTH="$(get_pane_info "$PANE_ID" "#{pane_width}")"
 PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
 
+###########
+# SIDEBAR #
+###########
+
+# Derived from tmux-sidebar
+# source: https://github.com/tmux-plugins/tmux-sidebar
 
 sidebar_registration() {
     get_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}" ""
@@ -37,7 +48,7 @@ sidebar_pane_id() {
 }
 
 current_pane_too_narrow() {
-    [ $PANE_WIDTH -lt $MINIMUM_WIDTH_FOR_SIDEBAR ]
+    [ "${PANE_WIDTH}" -lt "${MINIMUM_WIDTH_FOR_SIDEBAR}" ]
 }
 
 sidebar_left() {
@@ -76,16 +87,16 @@ register_pane() {
     local pane_id="$2"
     local option="${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_id}"
     local panes_list="$(get_tmux_option "${option}" "")"
-    if [ -n $panes_list ]; then
+    if [ -n "${panes_list}" ]; then
         panes_list+=" "
     fi
     panes_list+="${pane_id}"
-    set_tmux_option $option "${panes_list}"
+    set_tmux_option "${option}" "${panes_list}"
 }
 
 desired_sidebar_size() {
     local half_pane="$((PANE_WIDTH / 2))"
-    if [ -n "$SIZE" ] && [ $SIZE -lt $half_pane ]; then
+    if [ -n "$SIZE" ] && [ "$SIZE" -lt "$half_pane" ]; then
         echo "$SIZE"
     else
         echo "$half_pane"
@@ -94,7 +105,7 @@ desired_sidebar_size() {
 
 use_inverted_size() {
     local tmux_version_int="$(tmux_version_int)"
-    [ tmux_version_int -le 20 ]
+    [ "$tmux_version_int" -le 20 ]
 }
 
 no_focus() {
@@ -127,14 +138,13 @@ kill_sidebar() {
     kill_child_panes
     # kill the sidebar
     tmux kill-pane -t "$sidebar_pane_id"
-    PANE_WIDTH="$new_current_pane_width"
 }
 
 kill_child_panes() {
     local cp="$(get_child_panes)"
     local child_panes=($cp)
     for child_pane in "${child_panes[@]}"; do
-        tmux kill-pane -t $child_pane
+        tmux kill-pane -t "$child_pane"
     done
 
 }
@@ -193,14 +203,64 @@ split() {
 
     local new_pane_id="$(tmux new-window -P -F "#{pane_id}" "$COMMAND")"
     tmux join-pane "$direction" -p 50 -t "$pane_id" -s "$new_pane_id"
-    echo $new_pane_id
+    echo "$new_pane_id"
 }
 
-main() {
+
+sidebar() {
     if current_pane_is_sidebar; then
         execute_command_from_main_pane
     else
         toggle_sidebar
     fi
+}
+
+##########
+# WINDOW #
+##########
+
+window_exists() {
+    local window_id="$(window_id)"
+    tmux list-windows -F "#W" 2>/dev/null |
+        grep -q "^${window_id}$"
+}
+
+kill_window() {
+    local window_id="$(window_id)"
+    tmux kill-window -t "${window_id}" || return 1
+}
+
+create_window() {
+    local window_id="$(window_id)"
+    tmux new-window -d -n "${window_id}"
+    populate_window "$(window_id)"
+}
+
+window() {
+    if window_exists; then
+        kill_window
+    else
+        create_window
+    fi
+}
+
+##############
+# DELEGATION #
+##############
+
+main(){
+    case "${ARG}" in
+        'o')
+                window
+                return
+                ;;
+        'b')
+                sidebar
+                return
+                ;;
+        *)
+                echo "enter valid command"
+                return 1
+    esac
 }
 main

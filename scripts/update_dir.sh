@@ -17,7 +17,6 @@ get_base_pane_dir() {
     echo $base_pane_dir
 }
 
-
 check_directory_match() {
     local base_pane_dir="$(get_base_pane_dir)"
     if [ "$base_pane_dir" == "$CURRENT_DIR" ]; then
@@ -27,7 +26,6 @@ check_directory_match() {
         eval "${COMMAND}" 2>/dev/null || echo "Not a git repository"
     fi
 }
-
 
 main_loop() {
     while :

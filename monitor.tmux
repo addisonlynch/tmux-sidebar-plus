@@ -5,8 +5,6 @@ SCRIPTS_DIR="$CURRENT_DIR/scripts"
 
 source "$SCRIPTS_DIR/helpers.sh"
 source "$SCRIPTS_DIR/variables.sh"
-source "$SCRIPTS_DIR/window/helpers.sh"
-source "$SCRIPTS_DIR/sidebar/helpers.sh"
 
 
 set_default_key_options() {
@@ -22,7 +20,7 @@ set_key_bindings() {
 
     for option in $stored_key_vars; do
         value="$(get_value_from_option_name "$option")"
-        tmux bind-key "$value" run-shell "$SCRIPTS_DIR/delegate.sh '$value' '#{pane_id}'"
+        tmux bind-key "$value" run-shell "$SCRIPTS_DIR/toggler.sh '$value' '#{pane_id}' 'git'"
     done
 }
 
