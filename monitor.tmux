@@ -13,6 +13,7 @@ set_default_key_options() {
 
     set_tmux_option "${VAR_PREFIX}-${WINDOW_KEY_OPTION}-${KEY_SUFFIX}" "${window_key}"
     set_tmux_option "${VAR_PREFIX}-${SIDEBAR_KEY_OPTION}-${KEY_SUFFIX}" "${sidebar_key}"
+    set_tmux_option "${ALL_PANES_PREFIX}" ""
 }
 
 set_key_bindings() {

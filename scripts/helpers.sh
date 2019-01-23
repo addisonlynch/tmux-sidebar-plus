@@ -22,6 +22,11 @@ set_tmux_option() {
     tmux set-option -gq "$option" "$value"
 }
 
+unset_tmux_option() {
+    local option=$1
+    tmux set-option -gu "$option"
+}
+
 sidebar_key(){
     get_tmux_option "$SIDEBAR_KEY_OPTION" "$SIDEBAR_KEY"
 }

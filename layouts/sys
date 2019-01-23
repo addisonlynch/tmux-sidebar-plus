@@ -1,4 +1,4 @@
-LAYOUT_NAME="git"
+LAYOUT_NAME="sys"
 PANES=1
 COMMAND='bash -i'
 

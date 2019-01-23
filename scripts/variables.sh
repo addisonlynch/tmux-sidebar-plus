@@ -29,10 +29,11 @@ SIDEBAR_ID="monitor-sidebar"
 SIDEBAR_ID_OPTION="sidebar-id"
 
 REGISTERED_PANE_PREFIX="@-sidebar-registered-pane"
-REGISTERED_SIDEBAR_PREFIX="@-sidebar-is-sidebar"
 
-
+ALL_PANES_PREFIX="@-sidebar-all-panes"
 SIDEBAR_PANES_LIST_PREFIX="@-sidebar-panes-sidebar"
+
+PANE_PARENT_PREFIX="@-sidebar-parent-"
 
 MINIMUM_WIDTH_FOR_SIDEBAR="40"
 

@@ -74,12 +74,25 @@ register_sidebar() {
     # Stores the sidebar data as tmux options
     #
     local sidebar_id="$1"
-    # register the sidebar to the original pane
-    set_tmux_option "${REGISTERED_SIDEBAR_PREFIX}-${sidebar_id}" "$PANE_ID"
     # registers the main pane of the sidebar to the sidebar
     set_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}" "${sidebar_id}"
     # initialize the sidebar panes list
     set_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_id}" ""
+    # register pane to parent sidebar
+    set_tmux_option "${PANE_PARENT_PREFIX}-${sidebar_id}" "${PANE_ID}"
+
+    # add to list of all sidebar panes
+    add_to_all_panes "${sidebar_id}"
+}
+
+add_to_all_panes() {
+    local pane_id="$1"
+    local all_panes="$(get_tmux_option "${ALL_PANES_PREFIX}" "")"
+    if [ -n "${all_panes}" ]; then
+        all_panes+=" "
+    fi
+    all_panes+="${pane_id}"
+    set_tmux_option "${ALL_PANES_PREFIX}" "${all_panes}"
 }
 
 register_pane() {
@@ -92,6 +105,12 @@ register_pane() {
     fi
     panes_list+="${pane_id}"
     set_tmux_option "${option}" "${panes_list}"
+
+    # register pane to sidebar's parent
+    set_tmux_option "${PANE_PARENT_PREFIX}-${pane_id}" "${PANE_ID}"
+
+    # add pane to list of all panes
+    add_to_all_panes "${pane_id}"
 }
 
 desired_sidebar_size() {
@@ -138,6 +157,23 @@ kill_sidebar() {
     kill_child_panes
     # kill the sidebar
     tmux kill-pane -t "$sidebar_pane_id"
+
+    # deregister the sidebar
+    deregister_sidebar
+}
+
+deregister_sidebar() {
+    local sidebar_pane_id="$(sidebar_pane_id)"
+
+    unset_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}"
+    unset_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_pane_id}"
+    unset_tmux_option "${PANE_PARENT_PREFIX}-${sidebar_pane_id}"
+    # no need to remove from all-panes
+}
+
+deregister_pane() {
+    local pane_id="$1"
+    unset_tmux_option "${PANE_PARENT_PREFIX}-${pane_id}"
 }
 
 kill_child_panes() {
@@ -145,8 +181,8 @@ kill_child_panes() {
     local child_panes=($cp)
     for child_pane in "${child_panes[@]}"; do
         tmux kill-pane -t "$child_pane"
+        deregister_pane "$child_pane"
     done
-
 }
 
 get_child_panes() {
@@ -186,14 +222,15 @@ toggle_sidebar() {
 
 execute_command_from_main_pane() {
     # get pane_id for this sidebar
-    local main_pane_id="$(get_tmux_option "${REGISTERED_SIDEBAR_PREFIX}-${PANE_ID}" "")"
+    local main_pane_id="$(get_tmux_option "${PANE_PARENT_PREFIX}-${PANE_ID}" "")"
     # execute the same command as if from the "main" pane
-    $CURRENT_DIR/toggle.sh "$ARGS" "$main_pane_id"
+    $CURRENT_DIR/toggler.sh "$ARG" "$main_pane_id" "$3"
 }
 
 current_pane_is_sidebar() {
-    local var="$(get_tmux_option "${REGISTERED_SIDEBAR_PREFIX}-${PANE_ID}" "")"
-    [ -n "$var" ]
+    local all_panes="$(get_tmux_option "${ALL_PANES_PREFIX}" "")"
+    local retval=$(echo "${all_panes}" | grep "${PANE_ID}" | tr -d ' ')
+    [ -n "${retval}" ]
 }
 
 split() {
@@ -231,6 +268,9 @@ kill_window() {
 }
 
 create_window() {
+    if current_pane_is_sidebar; then
+        return 0
+    fi
     local window_id="$(window_id)"
     tmux new-window -d -n "${window_id}"
     populate_window "$(window_id)"
@@ -263,4 +303,5 @@ main(){
                 return 1
     esac
 }
+
 main

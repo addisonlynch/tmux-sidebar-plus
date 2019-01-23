@@ -32,13 +32,13 @@ main_loop() {
     do
         clear
         check_directory_match
-        sleep 1
         clear
         eval "${COMMAND}" 2>/dev/null || echo "Not a git repository"
+        sleep 3
     done
 }
 
 main() {
     main_loop
 }
-main_loop
+main
