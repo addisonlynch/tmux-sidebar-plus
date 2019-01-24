@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# ensure that an argument was passed
+# ensure that 3 arguments were passed
 if [ $# -ne 3 ]; then
     echo "Script requires 3 arguments"
     exit 1
@@ -9,21 +9,24 @@ fi
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$(dirname "$CURRENT_DIR")"
 
-source "$CURRENT_DIR/helpers.sh"
-source "$CURRENT_DIR/variables.sh"
-
+# Default minimum width
+MINIMUM_WIDTH="${MINIMUM_WIDTH_FOR_SIDEBAR}"
 
 ARG="$1"
 PANE_ID="$2"
-LAYOUT="$ROOT_DIR/layouts/$3"
-COMMAND='bash -i'
+L="$3"
+LAYOUT="$ROOT_DIR/layouts/${L}"
 
+source "$CURRENT_DIR/helpers.sh"
+source "$CURRENT_DIR/variables.sh"
 source "${LAYOUT}" # this can't be safe to do
 
 POSITION="left"   # "right"
 
 PANE_WIDTH="$(get_pane_info "$PANE_ID" "#{pane_width}")"
 PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
+
+CUSTOM_LAYOUTS_DIR=$(custom_layouts_dir)
 
 ###########
 # SIDEBAR #
@@ -48,7 +51,7 @@ sidebar_pane_id() {
 }
 
 current_pane_too_narrow() {
-    [ "${PANE_WIDTH}" -lt "${MINIMUM_WIDTH_FOR_SIDEBAR}" ]
+    [ "${PANE_WIDTH}" -lt "${MINIMUM_WIDTH}" ]
 }
 
 sidebar_left() {
@@ -140,14 +143,14 @@ split_sidebar_left() {
     # if use_inverted_size; then
     #     sidebar_size=$((PANE_WIDTH - $sidebar_size - 1))
     # fi
-    local sidebar_id="$(tmux new-window -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}" "$COMMAND")"
+    local sidebar_id="$(tmux new-window -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}")"
     tmux join-pane -hb -l "$sidebar_size" -t "$PANE_ID" -s "$sidebar_id"
     echo "$sidebar_id"
 }
 
 split_sidebar_right() {
     local sidebar_size=$(desired_sidebar_size)
-    tmux split-window -h -l "$sidebar_size" -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}" "$COMMAND"
+    tmux split-window -h -l "$sidebar_size" -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}"
 }
 
 kill_sidebar() {
@@ -224,7 +227,7 @@ execute_command_from_main_pane() {
     # get pane_id for this sidebar
     local main_pane_id="$(get_tmux_option "${PANE_PARENT_PREFIX}-${PANE_ID}" "")"
     # execute the same command as if from the "main" pane
-    $CURRENT_DIR/toggler.sh "$ARG" "$main_pane_id" "$3"
+    $CURRENT_DIR/toggler.sh "$ARG" "$main_pane_id" "${L}"
 }
 
 current_pane_is_sidebar() {
@@ -238,7 +241,7 @@ split() {
     local pane_id="$1"
     local direction="${DIRECTION["$2"]}"
 
-    local new_pane_id="$(tmux new-window -P -F "#{pane_id}" "$COMMAND")"
+    local new_pane_id="$(tmux new-window -P -F "#{pane_id}" )"
     tmux join-pane "$direction" -p 50 -t "$pane_id" -s "$new_pane_id"
     echo "$new_pane_id"
 }
@@ -284,6 +287,54 @@ window() {
     fi
 }
 
+###################
+# LAYOUT SELECTOR #
+###################
+
+execute_main_and_switch() {
+    local parent_id="$(get_tmux_option "${PANE_PARENT_PREFIX}-${PANE_ID}" "")"
+    tmux send-keys -t "${parent_id}" "$CURRENT_DIR/toggler.sh 'g' '${parent_id}' '${L}'" Enter
+    tmux select-pane -t "${parent_id}"
+}
+
+
+select_layout() {
+    if current_pane_is_sidebar; then
+        execute_main_and_switch
+    else
+        select_menu
+    fi
+}
+
+select_menu() {
+    local LAYOUTS=$(find ../layouts -type f -printf "%f\n")
+
+    if [ -n "$CUSTOM_LAYOUTS_DIR"]; then
+      if [ -n "$LAYOUTS" ]; then
+        LAYOUTS+=' '
+      fi
+      LAYOUTS+=$(find ../layouts -type f -printf "%f\n")
+    fi
+
+    echo ""
+    echo ""
+    echo "Default layouts:"
+    echo ""
+
+    for layout in "${LAYOUTS[@]}"; do
+        echo $layout | tr ' ' '\n'
+    done
+
+    echo ""
+    echo ""
+    echo -n "Enter layout and press [ENTER]: "
+    read layout
+    local selected_layout="$layout"
+    kill_sidebar
+    $CURRENT_DIR/toggler.sh "b" "${PANE_ID}" "${selected_layout}"
+}
+
+
 ##############
 # DELEGATION #
 ##############
@@ -296,6 +347,10 @@ main(){
                 ;;
         'b')
                 sidebar
+                return
+                ;;
+        'g')
+                select_layout
                 return
                 ;;
         *)

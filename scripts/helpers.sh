@@ -43,11 +43,15 @@ window_command_before() {
     get_tmux_option "$WINDOW_COMMAND_OPTION" "$WINDOW_COMMAND"
 }
 
+custom_layouts_dir() {
+    get_tmux_option "$CUSTOM_LAYOUTS_DIR_OPTION" ""
+}
+
 ######################
 # Handling stored options
 
 stored_key_vars() {
-    # Get currently stored gitplus tmux options
+    # Get currently stored sidebar-plus tmux options
     tmux show-options -g |
         \grep -i "^${VAR_PREFIX}-.*\-key" |
         cut -d ' ' -f1 |               # cut just the variable names

@@ -21,13 +21,13 @@ Two convenient commands are provided:
 Clone the repo:
 
 ```
-$ git clone https://github.com/addisonlynch/tmux-system-monitor ~/clone/path
+$ git clone https://github.com/addisonlynch/tmux-sidebar-plus ~/clone/path
 ```
 
 Add this line to the bottom of ``.tmux.conf``:
 
 ```
-$ run-shell ~/clone/path/system-monitor.tmux
+$ run-shell ~/clone/path/sidebar-plus.tmux
 ```
 
 Reload tmux environment
@@ -41,5 +41,6 @@ $ tmux source-file ~/.tmux.conf
 
 | option | default | description    |
 |-------|------|---|
-| ``@tmux-monitor-toggle-window-key``  | p | Set window toggle key |
-| ``@tmux-monitor-toggle-sidebar-key``  | o | Set sidebar toggle key |
+| ``@tmux-sidebar-plus-window-key``  | p | Set window toggle key |
+| ``@tmux-sidebar-plus-sidebar-key``  | o | Set sidebar toggle key |
+| ``@tmux-sidebar-plus-layout-dir`` | none | Additional layouts directory \

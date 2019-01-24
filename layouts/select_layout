@@ -1,0 +1,38 @@
+LAYOUT_NAME="sys"
+PANES=1
+MINIMUM_WIDTH="80"
+populate_sidebar() {
+    local sidebar_id="$1"
+
+    CUSTOM_LAYOUTS_DIR=$(custom_layouts_dir)
+
+    LAYOUTS=$(find ../layouts -type f -printf "%f\n")
+
+    if [ -n "$CUSTOM_LAYOUTS_DIR"]; then
+      if [ -n "$LAYOUTS" ]; then
+        LAYOUTS+=' '
+      fi
+      LAYOUTS+=$(find ../layouts -type f -printf "%f\n")
+    fi
+
+    echo ""
+    echo ""
+    echo "Default layouts:"
+    echo ""
+
+    for layout in "${LAYOUTS[@]}"; do
+        echo $layout | tr ' ' '\n'
+    done
+
+    echo ""
+    echo ""
+    echo -n "Enter layout and press [ENTER]: "
+    read layout
+
+    echo "$layout"
+
+    source "../layouts/${layout}"
+
+    populate_sidebar "$SIDEBAR_ID"
+
+}
