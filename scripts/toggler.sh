@@ -15,6 +15,7 @@ MINIMUM_WIDTH="${MINIMUM_WIDTH_FOR_SIDEBAR}"
 ARG="$1"
 PANE_ID="$2"
 L="$3"
+
 LAYOUT="$ROOT_DIR/layouts/${L}"
 
 source "$CURRENT_DIR/helpers.sh"
@@ -84,6 +85,11 @@ register_sidebar() {
     # register pane to parent sidebar
     set_tmux_option "${PANE_PARENT_PREFIX}-${sidebar_id}" "${PANE_ID}"
 
+    # register sidebar layout
+    # only if layout is not select_layout
+    if [ "${L}" != "select_layout" ]; then
+        set_tmux_option "${REGISTERED_LAYOUT_PREFIX}-${PANE_ID}" "${L}"
+    fi
     # add to list of all sidebar panes
     add_to_all_panes "${sidebar_id}"
 }
@@ -197,6 +203,21 @@ get_child_panes() {
 
 create_sidebar() {
     local position="$1" # left / right
+
+    # check if has cached layout for select_layout
+    if [ "${L}" = "select_layout" ]; then
+        local cached_layout="$(get_cached_layout | tr -d ' ')"
+        # if there is a cached layout
+        if [ -n "${cached_layout// }" ] && [ "$cached_layout" != "select_layout" ];
+        then
+           # open a sidebar with that layout
+           $CURRENT_DIR/toggler.sh "b" "${PANE_ID}" "${cached_layout}"
+        else
+            # open layout selection in main pane
+            $CURRENT_DIR/toggler.sh "g" "${PANE_ID}" "select_layout"
+        fi
+        return
+    fi
     local sidebar_id="$(split_sidebar_${position})"
     register_sidebar "$sidebar_id"
     tmux last-pane
@@ -291,12 +312,17 @@ window() {
 # LAYOUT SELECTOR #
 ###################
 
+get_cached_layout() {
+    local pane_id="${PANE_ID}"
+    local cached_layout="$(get_tmux_option "${REGISTERED_LAYOUT_PREFIX}-${pane_id}" "")"
+    echo "$cached_layout"
+}
+
 execute_main_and_switch() {
     local parent_id="$(get_tmux_option "${PANE_PARENT_PREFIX}-${PANE_ID}" "")"
     tmux send-keys -t "${parent_id}" "$CURRENT_DIR/toggler.sh 'g' '${parent_id}' '${L}'" Enter
     tmux select-pane -t "${parent_id}"
 }
-
 
 select_layout() {
     if current_pane_is_sidebar; then
@@ -330,7 +356,9 @@ select_menu() {
     echo -n "Enter layout and press [ENTER]: "
     read layout
     local selected_layout="$layout"
-    kill_sidebar
+    if has_sidebar; then
+        kill_sidebar
+    fi
     $CURRENT_DIR/toggler.sh "b" "${PANE_ID}" "${selected_layout}"
 }
 

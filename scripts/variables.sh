@@ -47,7 +47,10 @@ DIRECTION=(
     [vertical]="-v"
 )
 
-# Custom Layouts directory
-###########################
+###########
+# Layouts #
+###########
 
 CUSTOM_LAYOUTS_DIR_OPTION="custom-layouts-dir"
+
+REGISTERED_LAYOUT_PREFIX="@-sidebar-layout-pane"
