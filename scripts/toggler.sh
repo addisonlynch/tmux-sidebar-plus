@@ -29,6 +29,8 @@ PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
 
 CUSTOM_LAYOUTS_DIR=$(custom_layouts_dir)
 
+TREE_COMMAND=
+
 ###########
 # SIDEBAR #
 ###########
@@ -211,10 +213,10 @@ create_sidebar() {
         if [ -n "${cached_layout// }" ] && [ "$cached_layout" != "select_layout" ];
         then
            # open a sidebar with that layout
-           $CURRENT_DIR/toggler.sh "b" "${PANE_ID}" "${cached_layout}"
+           $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${cached_layout}"
         else
-            # open layout selection in main pane
-            $CURRENT_DIR/toggler.sh "g" "${PANE_ID}" "select_layout"
+            # open the default layout (directory tree)
+            $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "default"
         fi
         return
     fi
@@ -276,38 +278,6 @@ sidebar() {
     fi
 }
 
-##########
-# WINDOW #
-##########
-
-window_exists() {
-    local window_id="$(window_id)"
-    tmux list-windows -F "#W" 2>/dev/null |
-        grep -q "^${window_id}$"
-}
-
-kill_window() {
-    local window_id="$(window_id)"
-    tmux kill-window -t "${window_id}" || return 1
-}
-
-create_window() {
-    if current_pane_is_sidebar; then
-        return 0
-    fi
-    local window_id="$(window_id)"
-    tmux new-window -d -n "${window_id}"
-    populate_window "$(window_id)"
-}
-
-window() {
-    if window_exists; then
-        kill_window
-    else
-        create_window
-    fi
-}
-
 ###################
 # LAYOUT SELECTOR #
 ###################
@@ -320,7 +290,7 @@ get_cached_layout() {
 
 execute_main_and_switch() {
     local parent_id="$(get_tmux_option "${PANE_PARENT_PREFIX}-${PANE_ID}" "")"
-    tmux send-keys -t "${parent_id}" "$CURRENT_DIR/toggler.sh 'g' '${parent_id}' '${L}'" Enter
+    tmux send-keys -t "${parent_id}" "$CURRENT_DIR/toggler.sh 'select_layout' '${parent_id}' '${L}'" Enter
     tmux select-pane -t "${parent_id}"
 }
 
@@ -333,13 +303,13 @@ select_layout() {
 }
 
 select_menu() {
-    local LAYOUTS=$(find ../layouts -type f -printf "%f\n")
+    local LAYOUTS=$(find "${ROOT_DIR}/layouts" -type f -printf "%f\n")
 
     if [ -n "$CUSTOM_LAYOUTS_DIR"]; then
       if [ -n "$LAYOUTS" ]; then
         LAYOUTS+=' '
       fi
-      LAYOUTS+=$(find ../layouts -type f -printf "%f\n")
+      LAYOUTS+=$(find "${ROOT_DIR}/layouts" -type f -printf "%f\n")
     fi
 
     echo ""
@@ -359,7 +329,7 @@ select_menu() {
     if has_sidebar; then
         kill_sidebar
     fi
-    $CURRENT_DIR/toggler.sh "b" "${PANE_ID}" "${selected_layout}"
+    $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}"
 }
 
 
@@ -369,20 +339,16 @@ select_menu() {
 
 main(){
     case "${ARG}" in
-        'o')
-                window
-                return
-                ;;
-        'b')
+        'sidebar')
                 sidebar
                 return
                 ;;
-        'g')
+        'select_layout')
                 select_layout
                 return
                 ;;
         *)
-                echo "enter valid command"
+                echo "enter valid command. ${ARG} not valid."
                 return 1
     esac
 }

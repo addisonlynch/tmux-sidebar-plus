@@ -31,18 +31,6 @@ sidebar_key(){
     get_tmux_option "$SIDEBAR_KEY_OPTION" "$SIDEBAR_KEY"
 }
 
-window_key(){
-    get_tmux_option "$WINDOW_KEY_OPTION" "$WINDOW_KEY"
-}
-
-window_id(){
-    get_tmux_option "$WINDOW_ID_OPTION" "$WINDOW_ID"
-}
-
-window_command_before() {
-    get_tmux_option "$WINDOW_COMMAND_OPTION" "$WINDOW_COMMAND"
-}
-
 custom_layouts_dir() {
     get_tmux_option "$CUSTOM_LAYOUTS_DIR_OPTION" ""
 }
@@ -111,4 +99,42 @@ watched_dir_command() {
 
 select_base_pane() {
     tmux select-pane -t "${PANE_ID}"
+}
+
+##############
+# tree helpers
+##############
+
+custom_tree_command="$CURRENT_DIR/custom_tree_command.sh"
+
+
+command_exists() {
+    local command="$1"
+    type "$command" >/dev/null 2>&1
+}
+
+tree_command() {
+    local user_command="$(tree_user_command)"
+    if [ -n "$user_command" ]; then
+        echo "$user_command"
+    elif command_exists "tree"; then
+        echo "$TREE_COMMAND"
+    else
+        echo "$custom_tree_command"
+    fi
+}
+
+tree_user_command() {
+    get_tmux_option "$TREE_COMMAND_OPTION" ""
+}
+
+
+# coloring utility
+c_echo(){
+    RED="\033[0;31m"
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    NC='\033[0m' # No Color
+
+    printf "${!1}${2} ${NC}\n"
 }

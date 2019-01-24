@@ -1,0 +1,11 @@
+LAYOUT_NAME="default"
+PANES=1
+MINIMUM_WIDTH="80"
+
+populate_sidebar() {
+    local sidebar_id="$1"
+    tmux select-pane -t "$sidebar_id"
+
+    tmux send-keys -t "${sidebar_id}" "$(tree_command)" Enter
+    select_base_pane
+}

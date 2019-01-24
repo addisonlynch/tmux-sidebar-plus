@@ -7,21 +7,20 @@ source "$SCRIPTS_DIR/helpers.sh"
 source "$SCRIPTS_DIR/variables.sh"
 
 set_default_key_options() {
-    local window_key="$(window_key)"
     local sidebar_key="$(sidebar_key)"
 
-    set_tmux_option "${VAR_PREFIX}-${WINDOW_KEY_OPTION}-${KEY_SUFFIX}" "${window_key}"
     set_tmux_option "${VAR_PREFIX}-${SIDEBAR_KEY_OPTION}-${KEY_SUFFIX}" "${sidebar_key}"
-    set_tmux_option "${ALL_PANES_PREFIX}" ""
 }
 
 set_key_bindings() {
     local stored_key_vars="$(stored_key_vars)"
 
-    for option in $stored_key_vars; do
-        value="$(get_value_from_option_name "$option")"
-        tmux bind-key "$value" run-shell "$SCRIPTS_DIR/toggler.sh '$value' '#{pane_id}' 'select'"
-    done
+    # for option in $stored_key_vars; do
+    #     value="$(get_value_from_option_name "$option")"
+    #     tmux bind-key "$value" run-shell "$SCRIPTS_DIR/toggler.sh '$value' '#{pane_id}' 'select_layout'"
+    # done
+    tmux bind-key 'g' run-shell "$SCRIPTS_DIR/delegate.sh '#{pane_id}'"
+    tmux bind-key 'b' run-shell "$SCRIPTS_DIR/toggler.sh 'sidebar' '#{pane_id}' 'select_layout'"
 }
 
 main() {

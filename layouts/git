@@ -19,11 +19,3 @@ populate_sidebar(){
     watched_dir_command $pane_2_id "git log --all --decorate --oneline --graph"
     select_base_pane
 }
-
-populate_window() {
-    local window_id="$1"
-    tmux select-window -t "${window_id}"
-    tmux send-keys -t "${window_id}" top Enter
-}
-
-

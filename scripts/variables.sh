@@ -5,19 +5,6 @@ VAR_PREFIX="@-sidebar-plus"
 KEY_SUFFIX="key"
 SUPPORTED_TMUX_VERSION="1.9"
 
-##########
-# Window #
-##########
-WINDOW_ID="toggle-monitor"
-WINDOW_ID_OPTION="window-id"
-
-WINDOW_KEY="o"
-WINDOW_KEY_OPTION="sidebar-plus-window"
-
-REGISTERED_WINDOW_PANE_PREFIX="@-window-registered-pane"
-REGISTERED_WINDOW_PREFIX="@-window-is-window"
-WINDOW_PANES_LIST_PREFIX="@-window-panes-window"
-
 ###########
 # Sidebar #
 ###########
@@ -46,6 +33,8 @@ DIRECTION=(
     [horizontal]="-h"
     [vertical]="-v"
 )
+
+TREE_COMMAND_OPTION="@-sidebar-tree-command"
 
 ###########
 # Layouts #
