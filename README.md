@@ -1,14 +1,13 @@
 # tmux-sidebar-plus
 
-``tmux-monitor`` is a [tmux](https://github.com/tmux/tmux) plugin that enables one-touch system status monitoring for Linux/macOS/Windows systems.
+``tmux-sidebar-plus`` is a [tmux](https://github.com/tmux/tmux) plugin
+provides fast and flexible multi-window sidebar functionality.
 
 ## Features
 
 Two convenient commands are provided:
 
 **Sidebar** - built on [tmux-sidebar](https://github.com/tmux-plugins/tmux-sidebar), the system information sidebar is available through the command ``C-o`` by default
-
-**Spawnable Window** - adds a ``system-monitor`` window to any session which uses Glances, [htop](https://hisham.hm/htop/), or ``top``.
 
 ## How It Works
 

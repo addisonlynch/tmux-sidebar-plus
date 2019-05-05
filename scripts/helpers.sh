@@ -31,6 +31,10 @@ sidebar_key(){
     get_tmux_option "$SIDEBAR_KEY_OPTION" "$SIDEBAR_KEY"
 }
 
+layout_key(){
+    get_tmux_option "$SIDEBAR_LAYOUT_OPTION" "$LAYOUT_KEY"
+}
+
 custom_layouts_dir() {
     get_tmux_option "$CUSTOM_LAYOUTS_DIR_OPTION" ""
 }

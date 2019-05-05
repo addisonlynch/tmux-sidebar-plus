@@ -11,6 +11,9 @@ SUPPORTED_TMUX_VERSION="1.9"
 SIDEBAR_KEY="b"
 SIDEBAR_KEY_OPTION="sidebar-plus-sidebar"
 
+LAYOUT_KEY="g"
+SIDEBAR_LAYOUT_OPTION="sidebar-plus-layout"
+
 SIDEBAR_ID="sidebar"
 SIDEBAR_ID_OPTION="sidebar-id"
 

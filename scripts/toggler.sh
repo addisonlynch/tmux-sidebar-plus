@@ -327,33 +327,42 @@ select_layout() {
 }
 
 select_menu() {
+    # Get all default layouts
     local LAYOUTS=$(find "${ROOT_DIR}/layouts" -type f -printf "%f\n")
-
-    if [ -n "$CUSTOM_LAYOUTS_DIR"]; then
-      if [ -n "$LAYOUTS" ]; then
-        LAYOUTS+=' '
-      fi
-      LAYOUTS+=$(find "${ROOT_DIR}/layouts" -type f -printf "%f\n")
+    local CUSTOM_LAYOUTS
+    # If there is a custom layouts directory
+    if [[ -n "$CUSTOM_LAYOUTS_DIR" ]]; then
+      # Add the layouts to the list
+      CUSTOM_LAYOUTS=$(find "${CUSTOM_LAYOUTS_DIR}/layouts" -type f -printf "%f\n")
     fi
 
     echo ""
     echo ""
     echo "Default layouts:"
     echo ""
-
-    for layout in "${LAYOUTS[@]}"; do
-        echo $layout | tr ' ' '\n'
-    done
+    echo "${LAYOUTS[@]}"
 
     echo ""
     echo ""
     echo -n "Enter layout and press [ENTER]: "
     read layout
     local selected_layout="$layout"
-    if has_sidebar; then
-        kill_sidebar
+    local found_layout=0
+    # check if selected layout is available
+    for l in $LAYOUTS; do
+        if [[ $l == $selected_layout ]]; then
+            found_layout=1
+        fi
+    done
+    if [[ found_layout -eq 1 ]]; then
+        if has_sidebar; then
+            kill_sidebar
+        fi
+        $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}"
+    else
+        echo "ERROR: ${selected_layout} not found."
+        exit 1
     fi
-    $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}"
 }
 
 
