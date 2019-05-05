@@ -1,4 +1,4 @@
-# tmux-monitor
+# tmux-sidebar-plus
 
 ``tmux-monitor`` is a [tmux](https://github.com/tmux/tmux) plugin that enables one-touch system status monitoring for Linux/macOS/Windows systems.
 

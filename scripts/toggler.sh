@@ -54,7 +54,7 @@ sidebar_pane_id() {
 }
 
 current_pane_too_narrow() {
-    [ "${PANE_WIDTH}" -lt "${MINIMUM_WIDTH}" ]
+    [[ "${PANE_WIDTH}" -lt "${MINIMUM_WIDTH}" ]]
 }
 
 sidebar_left() {
@@ -161,6 +161,14 @@ split_sidebar_right() {
     tmux split-window -h -l "$sidebar_size" -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}"
 }
 
+current_pane_width_not_changed() {
+    if [ $PANE_WIDTH -eq $1 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 kill_sidebar() {
     # get data before killing the sidebar
     local sidebar_pane_id="$(sidebar_pane_id)"
@@ -168,6 +176,22 @@ kill_sidebar() {
     kill_child_panes
     # kill the sidebar
     tmux kill-pane -t "$sidebar_pane_id"
+
+    # check current pane "expanded" properly
+    local new_current_pane_width="$(get_pane_info "$PANE_ID" "#{pane_width}")"
+    if current_pane_width_not_changed "$new_current_pane_width"; then
+        # need to expand current pane manually
+        local direction_flag
+        if [[ "${POSITION}" =~ "right" ]]; then
+            direction_flag="-R"
+        else
+            direction_flag="-L"
+        fi
+        # compensate 1 column
+        tmux resize-pane "$direction_flag" "$((PANE_WIDTH + 1))"
+    fi
+    PANE_WIDTH="$new_current_pane_width"
+
 
     # deregister the sidebar
     deregister_sidebar
