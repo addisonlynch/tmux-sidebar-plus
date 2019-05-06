@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 
 # ensure that 4 arguments were passed
-# if [ $# -ne 4 ]; then
-#     echo "Script requires 4 arguments"
-#     exit 1
-# fi
+if [ $# -ne 4 ]; then
+    echo "Script requires 4 arguments"
+    exit 1
+fi
 
 __dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 __root_dir="$(dirname "$__dir")"
-
-# Default minimum width
-MINIMUM_WIDTH="${MINIMUM_WIDTH_FOR_SIDEBAR}"
 
 ARG="$1"
 PANE_ID="$2"
@@ -32,6 +29,8 @@ if [[ $L_TYPE == 'custom' ]]; then
 else
     LAYOUT="$__root_dir/layouts/${L}"
 fi
+# Default minimum width
+MINIMUM_WIDTH="${MINIMUM_WIDTH_FOR_SIDEBAR}"
 
 source "${LAYOUT}" # this can't be safe to do
 
@@ -101,6 +100,7 @@ register_sidebar() {
 }
 
 add_to_all_panes() {
+    # Adds sidebar panes to the list of all sidebar panes
     local pane_id="$1"
     local all_panes="$(get_tmux_option "${ALL_PANES_PREFIX}" "")"
     if [ -n "${all_panes}" ]; then

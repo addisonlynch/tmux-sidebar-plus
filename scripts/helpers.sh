@@ -39,22 +39,6 @@ custom_layouts_dir() {
     get_tmux_option "${VAR_PREFIX}-$CUSTOM_LAYOUTS_DIR_OPTION" ""
 }
 
-######################
-# Handling stored options
-
-stored_key_vars() {
-    # Get currently stored sidebar-plus tmux options
-    tmux show-options -g |
-        \grep -i "^${VAR_PREFIX}-.*\-key" |
-        cut -d ' ' -f1 |               # cut just the variable names
-        xargs                          # splat var names in one line
-}
-
-get_value_from_option_name() {
-    local option="$1"
-    get_tmux_option "$option" ""
-}
-
 ##############
 # tmux version
 
@@ -105,22 +89,6 @@ command_exists() {
     local command="$1"
     type "$command" >/dev/null 2>&1
 }
-
-tree_command() {
-    local user_command="$(tree_user_command)"
-    if [ -n "$user_command" ]; then
-        echo "$user_command"
-    elif command_exists "tree"; then
-        echo "$TREE_COMMAND"
-    else
-        echo "$custom_tree_command"
-    fi
-}
-
-tree_user_command() {
-    get_tmux_option "$TREE_COMMAND_OPTION" ""
-}
-
 
 # coloring utility
 c_echo(){
