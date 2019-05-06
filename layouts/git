@@ -8,7 +8,7 @@ populate_sidebar(){
     tmux resize-pane -t "$sidebar_id" -x "${MINIMUM_WIDTH}"
 
     # Build & register panes
-    local pane_1_id="$(split "${sidebar_id}" "vertical")"
+    local pane_1_id="$(split "${sidebar_id}" "-v")"
     register_pane $sidebar_id $pane_1_id
 
     # Run panes' commands

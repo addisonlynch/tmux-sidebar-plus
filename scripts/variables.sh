@@ -1,3 +1,5 @@
+#! /usr/bin/env bash
+
 ##########
 # Common #
 ##########
@@ -23,16 +25,6 @@ PANE_PARENT_PREFIX="@-sidebar-parent"
 
 MINIMUM_WIDTH_FOR_SIDEBAR="40"
 
-##########
-# CONFIG #
-##########
-
-declare -A DIRECTION
-
-DIRECTION=(
-    [horizontal]="-h"
-    [vertical]="-v"
-)
 ###########
 # Layouts #
 ###########

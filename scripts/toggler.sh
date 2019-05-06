@@ -289,7 +289,7 @@ current_pane_is_sidebar() {
 split() {
     # simple splitter for either horizontal or vertical
     local pane_id="$1"
-    local direction="${DIRECTION["$2"]}"
+    local direction="$2"
 
     local new_pane_id="$(tmux new-window -P -F "#{pane_id}" )"
     tmux join-pane "${direction}" -p 50 -t "${pane_id}" -s "${new_pane_id}"
