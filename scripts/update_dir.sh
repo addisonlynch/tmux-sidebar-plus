@@ -11,14 +11,12 @@ CHILD_ID="$2"
 COMMAND="$3" # command to watch
 
 get_base_pane_dir() {
-    local all_panes="$(tmux list-panes -F "#{pane_current_path} #{pane_id}")"
-    local base_pane_dir=$(echo $all_panes | grep -wo '.*' | cut -d' ' -f1)
-
-    echo $base_pane_dir
+    tmux list-panes -F "#{pane_current_path} #{pane_id}" | grep $BASE_ID | cut -d' ' -f1
 }
 
 check_directory_match() {
     local base_pane_dir="$(get_base_pane_dir)"
+    echo "BASE PANE DIR: ${base_pane_dir}"
     if [ "$base_pane_dir" == "$CURRENT_DIR" ]; then
         return
     else
@@ -41,4 +39,5 @@ main_loop() {
 main() {
     main_loop
 }
+
 main
