@@ -22,7 +22,7 @@ set_key_bindings() {
     local layout_key="$(layout_key)"
 
     tmux bind-key "${layout_key}" run-shell "$SCRIPTS_DIR/delegate.sh '#{pane_id}'"
-    tmux bind-key "${sidebar_key}" run-shell "$SCRIPTS_DIR/toggler.sh 'sidebar' '#{pane_id}' 'select_layout'"
+    tmux bind-key "${sidebar_key}" run-shell "$SCRIPTS_DIR/toggler.sh 'sidebar' '#{pane_id}' 'default' 'default'"
 }
 
 main() {

@@ -16,7 +16,6 @@ get_base_pane_dir() {
 
 check_directory_match() {
     local base_pane_dir="$(get_base_pane_dir)"
-    echo "BASE PANE DIR: ${base_pane_dir}"
     if [ "$base_pane_dir" == "$CURRENT_DIR" ]; then
         return
     else

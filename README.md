@@ -43,3 +43,13 @@ $ tmux source-file ~/.tmux.conf
 | ``@tmux-sidebar-plus-window-key``  | p | Set window toggle key |
 | ``@tmux-sidebar-plus-sidebar-key``  | o | Set sidebar toggle key |
 | ``@tmux-sidebar-plus-layout-dir`` | none | Additional layouts directory \
+
+## Custom Layouts
+
+It is possible to override the default layouts by specifying a custom layout of
+the same name. ``tmux-sidebar-plus`` will then use the custom layout's
+configuration file.
+
+### Using ``update_dir.sh``
+
+The ``update_dir.sh`` script runs a command every 3 seconds.

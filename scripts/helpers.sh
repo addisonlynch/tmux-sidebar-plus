@@ -36,7 +36,7 @@ layout_key(){
 }
 
 custom_layouts_dir() {
-    get_tmux_option "$CUSTOM_LAYOUTS_DIR_OPTION" ""
+    get_tmux_option "${VAR_PREFIX}-$CUSTOM_LAYOUTS_DIR_OPTION" ""
 }
 
 ######################

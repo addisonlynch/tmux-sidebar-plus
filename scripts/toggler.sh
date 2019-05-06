@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# ensure that 3 arguments were passed
-if [ $# -ne 3 ]; then
-    echo "Script requires 3 arguments"
-    exit 1
-fi
+# ensure that 4 arguments were passed
+# if [ $# -ne 4 ]; then
+#     echo "Script requires 4 arguments"
+#     exit 1
+# fi
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$(dirname "$CURRENT_DIR")"
@@ -15,12 +15,10 @@ MINIMUM_WIDTH="${MINIMUM_WIDTH_FOR_SIDEBAR}"
 ARG="$1"
 PANE_ID="$2"
 L="$3"
-
-LAYOUT="$ROOT_DIR/layouts/${L}"
+L_TYPE="$4"
 
 source "$CURRENT_DIR/helpers.sh"
 source "$CURRENT_DIR/variables.sh"
-source "${LAYOUT}" # this can't be safe to do
 
 POSITION="left"   # "right"
 
@@ -29,7 +27,13 @@ PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
 
 CUSTOM_LAYOUTS_DIR=$(custom_layouts_dir)
 
-TREE_COMMAND=
+if [[ $L_TYPE == 'custom' ]]; then
+    LAYOUT="${CUSTOM_LAYOUTS_DIR}/${L}"
+else
+    LAYOUT="$ROOT_DIR/layouts/${L}"
+fi
+
+source "${LAYOUT}" # this can't be safe to do
 
 ###########
 # SIDEBAR #
@@ -327,38 +331,63 @@ select_layout() {
 }
 
 select_menu() {
+    # TODO: refactor
+
     # Get all default layouts
-    local LAYOUTS=$(find "${ROOT_DIR}/layouts" -type f -printf "%f\n")
+    local DEFAULT_LAYOUTS=$(find "${ROOT_DIR}/layouts" -type f -printf "%f\n")
     local CUSTOM_LAYOUTS
     # If there is a custom layouts directory
     if [[ -n "$CUSTOM_LAYOUTS_DIR" ]]; then
       # Add the layouts to the list
-      CUSTOM_LAYOUTS=$(find "${CUSTOM_LAYOUTS_DIR}/layouts" -type f -printf "%f\n")
+      CUSTOM_LAYOUTS=$(find "${CUSTOM_LAYOUTS_DIR}" -type f -printf "%f\n")
     fi
 
     echo ""
     echo ""
     echo "Default layouts:"
     echo ""
-    echo "${LAYOUTS[@]}"
-
+    echo "${DEFAULT_LAYOUTS[@]}"
+    if [[ -n $CUSTOM_LAYOUTS ]]; then
+        echo ""
+        echo "Custom Layouts:"
+        echo ""
+        echo "${CUSTOM_LAYOUTS[@]}"
+    fi
     echo ""
     echo ""
     echo -n "Enter layout and press [ENTER]: "
     read layout
     local selected_layout="$layout"
-    local found_layout=0
-    # check if selected layout is available
-    for l in $LAYOUTS; do
+    local found_default_layout=0
+    local found_custom_layout=0
+
+    # check if selected layout is available in default layouts
+    for l in $DEFAULT_LAYOUTS; do
         if [[ $l == $selected_layout ]]; then
-            found_layout=1
+            found_default_layout=1
         fi
     done
-    if [[ found_layout -eq 1 ]]; then
+
+    # check if selected layout is available in custom layouts
+    if [[ -n $CUSTOM_LAYOUTS ]]; then
+        for l in $CUSTOM_LAYOUTS; do
+            if [[ $l == $selected_layout ]]; then
+                found_custom_layout=1
+                found_default_layout=0
+            fi
+        done
+    fi
+
+    if [[ $found_custom_layout -eq 1 ]] || [[ $found_default_layout -eq 1 ]];
+    then
         if has_sidebar; then
             kill_sidebar
         fi
-        $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}"
+        if [[ $found_custom_layout -eq 1 ]]; then
+            $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}" "custom"
+        else
+            $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}" "d"
+        fi
     else
         echo "ERROR: ${selected_layout} not found."
         exit 1
