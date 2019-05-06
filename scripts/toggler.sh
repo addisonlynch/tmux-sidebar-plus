@@ -6,8 +6,8 @@
 #     exit 1
 # fi
 
-CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT_DIR="$(dirname "$CURRENT_DIR")"
+__dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+__root_dir="$(dirname "$__dir")"
 
 # Default minimum width
 MINIMUM_WIDTH="${MINIMUM_WIDTH_FOR_SIDEBAR}"
@@ -17,20 +17,20 @@ PANE_ID="$2"
 L="$3"
 L_TYPE="$4"
 
-source "$CURRENT_DIR/helpers.sh"
-source "$CURRENT_DIR/variables.sh"
+source "${__dir}/helpers.sh"
+source "${__dir}/variables.sh"
 
-POSITION="left"   # "right"
+readonly POSITION="left"   # "right"
 
 PANE_WIDTH="$(get_pane_info "$PANE_ID" "#{pane_width}")"
-PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
+readonly PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
 
-CUSTOM_LAYOUTS_DIR=$(custom_layouts_dir)
+readonly CUSTOM_LAYOUTS_DIR=$(custom_layouts_dir)
 
 if [[ $L_TYPE == 'custom' ]]; then
     LAYOUT="${CUSTOM_LAYOUTS_DIR}/${L}"
 else
-    LAYOUT="$ROOT_DIR/layouts/${L}"
+    LAYOUT="$__root_dir/layouts/${L}"
 fi
 
 source "${LAYOUT}" # this can't be safe to do
@@ -62,7 +62,7 @@ current_pane_too_narrow() {
 }
 
 sidebar_left() {
-    [[ $POSITION =~ "left" ]]
+    [[ "${POSITION}" =~ "left" ]]
 }
 
 has_sidebar() {
@@ -130,20 +130,20 @@ register_pane() {
 
 desired_sidebar_size() {
     local half_pane="$((PANE_WIDTH / 2))"
-    if [ -n "$SIZE" ] && [ "$SIZE" -lt "$half_pane" ]; then
-        echo "$SIZE"
+    if [ -n "${SIZE}" ] && [ "${SIZE}" -lt "${half_pane}" ]; then
+        echo "${SIZE}"
     else
-        echo "$half_pane"
+        echo "${half_pane}"
     fi
 }
 
 use_inverted_size() {
     local tmux_version_int="$(tmux_version_int)"
-    [ "$tmux_version_int" -le 20 ]
+    [ "${tmux_version_int}" -le 20 ]
 }
 
 no_focus() {
-    if [[ $FOCUS =~ (^focus) ]]; then
+    if [[ "${FOCUS}" =~ (^focus) ]]; then
         return 1
     else
         return 0
@@ -155,18 +155,18 @@ split_sidebar_left() {
     # if use_inverted_size; then
     #     sidebar_size=$((PANE_WIDTH - $sidebar_size - 1))
     # fi
-    local sidebar_id="$(tmux new-window -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}")"
-    tmux join-pane -hb -l "$sidebar_size" -t "$PANE_ID" -s "$sidebar_id"
-    echo "$sidebar_id"
+    local sidebar_id="$(tmux new-window -c "${PANE_CURRENT_PATH}" -P -F "#{pane_id}")"
+    tmux join-pane -hb -l "${sidebar_size}" -t "${PANE_ID}" -s "${sidebar_id}"
+    echo "${sidebar_id}"
 }
 
 split_sidebar_right() {
     local sidebar_size=$(desired_sidebar_size)
-    tmux split-window -h -l "$sidebar_size" -c "$PANE_CURRENT_PATH" -P -F "#{pane_id}"
+    tmux split-window -h -l "${sidebar_size}" -c "${PANE_CURRENT_PATH}" -P -F "#{pane_id}"
 }
 
 current_pane_width_not_changed() {
-    if [ $PANE_WIDTH -eq $1 ]; then
+    if [ "${PANE_WIDTH}" -eq $1 ]; then
         return 0
     else
         return 1
@@ -179,11 +179,11 @@ kill_sidebar() {
     # kill the sidebar's nested panes
     kill_child_panes
     # kill the sidebar
-    tmux kill-pane -t "$sidebar_pane_id"
+    tmux kill-pane -t "${sidebar_pane_id}"
 
     # check current pane "expanded" properly
-    local new_current_pane_width="$(get_pane_info "$PANE_ID" "#{pane_width}")"
-    if current_pane_width_not_changed "$new_current_pane_width"; then
+    local new_current_pane_width="$(get_pane_info "${PANE_ID}" "#{pane_width}")"
+    if current_pane_width_not_changed "${new_current_pane_width}"; then
         # need to expand current pane manually
         local direction_flag
         if [[ "${POSITION}" =~ "right" ]]; then
@@ -192,10 +192,9 @@ kill_sidebar() {
             direction_flag="-L"
         fi
         # compensate 1 column
-        tmux resize-pane "$direction_flag" "$((PANE_WIDTH + 1))"
+        tmux resize-pane "${direction_flag}" "$((PANE_WIDTH + 1))"
     fi
-    PANE_WIDTH="$new_current_pane_width"
-
+    PANE_WIDTH="${new_current_pane_width}"
 
     # deregister the sidebar
     deregister_sidebar
@@ -219,15 +218,15 @@ kill_child_panes() {
     local cp="$(get_child_panes)"
     local child_panes=($cp)
     for child_pane in "${child_panes[@]}"; do
-        tmux kill-pane -t "$child_pane"
-        deregister_pane "$child_pane"
+        tmux kill-pane -t "${child_pane}"
+        deregister_pane "${child_pane}"
     done
 }
 
 get_child_panes() {
     local sidebar_pane_id="$(sidebar_pane_id)"
     local child_panes="$(get_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_pane_id}" "")"
-    echo $child_panes
+    echo "${child_panes}"
 }
 
 
@@ -238,20 +237,20 @@ create_sidebar() {
     if [ "${L}" = "select_layout" ]; then
         local cached_layout="$(get_cached_layout | tr -d ' ')"
         # if there is a cached layout
-        if [ -n "${cached_layout// }" ] && [ "$cached_layout" != "select_layout" ];
+        if [ -n "${cached_layout// }" ] && [ "${cached_layout}" != "select_layout" ];
         then
            # open a sidebar with that layout
-           $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${cached_layout}"
+           $__dir/toggler.sh "sidebar" "${PANE_ID}" "${cached_layout}"
         else
             # open the default layout (directory tree)
-            $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "default"
+            $__dir/toggler.sh "sidebar" "${PANE_ID}" "default"
         fi
         return
     fi
     local sidebar_id="$(split_sidebar_${position})"
-    register_sidebar "$sidebar_id"
+    register_sidebar "${sidebar_id}"
     tmux last-pane
-    populate_sidebar "$sidebar_id"
+    populate_sidebar "${sidebar_id}"
     # if no_focus; then
     #     tmux last-pane
     # fi
@@ -278,7 +277,7 @@ execute_command_from_main_pane() {
     # get pane_id for this sidebar
     local main_pane_id="$(get_tmux_option "${PANE_PARENT_PREFIX}-${PANE_ID}" "")"
     # execute the same command as if from the "main" pane
-    $CURRENT_DIR/toggler.sh "$ARG" "$main_pane_id" "${L}"
+    $__dir/toggler.sh "${ARG}" "${main_pane_id}" "${L}"
 }
 
 current_pane_is_sidebar() {
@@ -293,8 +292,8 @@ split() {
     local direction="${DIRECTION["$2"]}"
 
     local new_pane_id="$(tmux new-window -P -F "#{pane_id}" )"
-    tmux join-pane "$direction" -p 50 -t "$pane_id" -s "$new_pane_id"
-    echo "$new_pane_id"
+    tmux join-pane "${direction}" -p 50 -t "${pane_id}" -s "${new_pane_id}"
+    echo "${new_pane_id}"
 }
 
 
@@ -313,12 +312,12 @@ sidebar() {
 get_cached_layout() {
     local pane_id="${PANE_ID}"
     local cached_layout="$(get_tmux_option "${REGISTERED_LAYOUT_PREFIX}-${pane_id}" "")"
-    echo "$cached_layout"
+    echo "${cached_layout}"
 }
 
 execute_main_and_switch() {
     local parent_id="$(get_tmux_option "${PANE_PARENT_PREFIX}-${PANE_ID}" "")"
-    tmux send-keys -t "${parent_id}" "$CURRENT_DIR/toggler.sh 'select_layout' '${parent_id}' '${L}'" Enter
+    tmux send-keys -t "${parent_id}" "$__dir/toggler.sh 'select_layout' '${parent_id}' '${L}'" Enter
     tmux select-pane -t "${parent_id}"
 }
 
@@ -334,10 +333,10 @@ select_menu() {
     # TODO: refactor
 
     # Get all default layouts
-    local DEFAULT_LAYOUTS=$(find "${ROOT_DIR}/layouts" -type f -printf "%f\n")
+    local DEFAULT_LAYOUTS=$(find "${__root_dir}/layouts" -type f -printf "%f\n")
     local CUSTOM_LAYOUTS
     # If there is a custom layouts directory
-    if [[ -n "$CUSTOM_LAYOUTS_DIR" ]]; then
+    if [[ -n "${CUSTOM_LAYOUTS_DIR}" ]]; then
       # Add the layouts to the list
       CUSTOM_LAYOUTS=$(find "${CUSTOM_LAYOUTS_DIR}" -type f -printf "%f\n")
     fi
@@ -357,7 +356,7 @@ select_menu() {
     echo ""
     echo -n "Enter layout and press [ENTER]: "
     read layout
-    local selected_layout="$layout"
+    local selected_layout="${layout}"
     local found_default_layout=0
     local found_custom_layout=0
 
@@ -384,9 +383,9 @@ select_menu() {
             kill_sidebar
         fi
         if [[ $found_custom_layout -eq 1 ]]; then
-            $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}" "custom"
+            $__dir/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}" "custom"
         else
-            $CURRENT_DIR/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}" "d"
+            $__dir/toggler.sh "sidebar" "${PANE_ID}" "${selected_layout}" "d"
         fi
     else
         echo "ERROR: ${selected_layout} not found."

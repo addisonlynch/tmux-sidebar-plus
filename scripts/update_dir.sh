@@ -3,8 +3,8 @@
 # Updates the directory of running watch commands to
 # current directory of the base pane
 
-CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SCRIPTS_DIR="$(dirname "$CURRENT_DIR")"
+__dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPTS_DIR="$(dirname "$__dir")"
 
 BASE_ID="$1" # ID of base pane
 CHILD_ID="$2"
@@ -16,7 +16,7 @@ get_base_pane_dir() {
 
 check_directory_match() {
     local base_pane_dir="$(get_base_pane_dir)"
-    if [ "$base_pane_dir" == "$CURRENT_DIR" ]; then
+    if [ "$base_pane_dir" == "$__dir" ]; then
         return
     else
         cd "$base_pane_dir"

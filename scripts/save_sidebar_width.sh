@@ -2,10 +2,10 @@
 
 # SOURCE: tmux-sidebar
 
-CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+__dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-source "$CURRENT_DIR/helpers.sh"
-source "$CURRENT_DIR/variables.sh"
+source "$__dir/helpers.sh"
+source "$__dir/variables.sh"
 
 DIR_PATH="$(echo "$1" | tail -1)" # fixes a bug with invalid param
 WIDTH="$2"

@@ -1,11 +1,11 @@
 #! /usr/bin/env bash
 
-CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+__dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 PANE_ID="$1"
 
-source "$CURRENT_DIR/helpers.sh"
-source "$CURRENT_DIR/variables.sh"
+source "$__dir/helpers.sh"
+source "$__dir/variables.sh"
 
 sidebar_registration() {
     get_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}" ""
@@ -32,7 +32,7 @@ has_sidebar() {
 
 main() {
     if has_sidebar; then
-        tmux send-keys -t "${PANE_ID}" "$CURRENT_DIR/toggler.sh 'select_layout' '${PANE_ID}' 'default'" Enter
+        tmux send-keys -t "${PANE_ID}" "$__dir/toggler.sh 'select_layout' '${PANE_ID}' 'default'" Enter
     fi
     return 0
 }

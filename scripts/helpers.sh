@@ -87,7 +87,7 @@ watched_dir_command() {
     local target="$1"
     local command="$2"
 
-    tmux send-keys -t "${target}" "$CURRENT_DIR/update_dir.sh '${PANE_ID}' '${target}' '${command}'" Enter
+    tmux send-keys -t "${target}" "$__dir/update_dir.sh '${PANE_ID}' '${target}' '${command}'" Enter
 }
 
 select_base_pane() {
@@ -98,7 +98,7 @@ select_base_pane() {
 # tree helpers
 ##############
 
-custom_tree_command="$CURRENT_DIR/custom_tree_command.sh"
+custom_tree_command="$__dir/custom_tree_command.sh"
 
 
 command_exists() {
