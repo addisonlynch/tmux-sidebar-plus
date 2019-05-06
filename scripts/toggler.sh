@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# ensure that 4 arguments were passed
-if [ $# -ne 4 ]; then
-    echo "Script requires 4 arguments"
-    exit 1
-fi
 
 __dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 __root_dir="$(dirname "$__dir")"
@@ -91,10 +86,8 @@ register_sidebar() {
     set_tmux_option "${PANE_PARENT_PREFIX}-${sidebar_id}" "${PANE_ID}"
 
     # register sidebar layout
-    # only if layout is not select_layout
-    if [ "${L}" != "select_layout" ]; then
-        set_tmux_option "${REGISTERED_LAYOUT_PREFIX}-${PANE_ID}" "${L}"
-    fi
+    set_tmux_option "${REGISTERED_LAYOUT_PREFIX}-${PANE_ID}" "${L}"
+
     # add to list of all sidebar panes
     add_to_all_panes "${sidebar_id}"
 }
@@ -277,7 +270,7 @@ execute_command_from_main_pane() {
     # get pane_id for this sidebar
     local main_pane_id="$(get_tmux_option "${PANE_PARENT_PREFIX}-${PANE_ID}" "")"
     # execute the same command as if from the "main" pane
-    $__dir/toggler.sh "${ARG}" "${main_pane_id}" "${L}"
+    $__dir/toggler.sh "${ARG}" "${main_pane_id}" "${L} ${L_TYPE}"
 }
 
 current_pane_is_sidebar() {
