@@ -333,12 +333,13 @@ select_menu() {
     # TODO: refactor
 
     # Get all default layouts
-    local DEFAULT_LAYOUTS=$(find "${__root_dir}/layouts" -type f -printf "%f\n")
+    local DEFAULT_LAYOUTS=$(find "${__root_dir}/layouts" -type f -exec basename {} \;)
+
     local CUSTOM_LAYOUTS
     # If there is a custom layouts directory
     if [[ -n "${CUSTOM_LAYOUTS_DIR}" ]]; then
       # Add the layouts to the list
-      CUSTOM_LAYOUTS=$(find "${CUSTOM_LAYOUTS_DIR}" -type f -printf "%f\n")
+      CUSTOM_LAYOUTS=$(find "${CUSTOM_LAYOUTS_DIR}" -type f -exec basename {} \;)
     fi
 
     echo ""
@@ -355,7 +356,7 @@ select_menu() {
     echo ""
     echo ""
     echo -n "Enter layout and press [ENTER]: "
-    read layout
+    read -r layout
     local selected_layout="${layout}"
     local found_default_layout=0
     local found_custom_layout=0

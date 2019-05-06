@@ -1,7 +1,7 @@
 # tmux-sidebar-plus
 
-``tmux-sidebar-plus`` is a fast and flexible [tmux]
-(https://github.com/tmux/tmux) sidebar.
+``tmux-sidebar-plus`` is a fast and customizable multi-window
+[tmux](https://github.com/tmux/tmux) sidebar.
 
 An enhanced fork of [tmux-sidebar](https://github.com/tmux-plugins/tmux-sidebar),
 the system information sidebar is available through the command ``prefix-b`` by default.
