@@ -58,7 +58,11 @@ A number of useful layouts are provided by ``tmux-sidebar-plus``, including:
 
 #### ``default``
 
+![Default Layout](/img/default_small.gif)
 
+#### ``git``
+
+![Git Layout](/img/git_small.gif)
 
 ### Custom Layouts
 
