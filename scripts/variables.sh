@@ -9,10 +9,10 @@ SUPPORTED_TMUX_VERSION="1.9"
 # Sidebar #
 ###########
 SIDEBAR_KEY="b"
-SIDEBAR_KEY_OPTION="sidebar-plus-sidebar"
+SIDEBAR_KEY_OPTION="sidebar-key"
 
 LAYOUT_KEY="g"
-SIDEBAR_LAYOUT_OPTION="sidebar-plus-layout"
+SIDEBAR_LAYOUT_OPTION="layout-key"
 
 SIDEBAR_ID="sidebar"
 SIDEBAR_ID_OPTION="sidebar-id"

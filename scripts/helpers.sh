@@ -28,11 +28,11 @@ unset_tmux_option() {
 }
 
 sidebar_key(){
-    get_tmux_option "$SIDEBAR_KEY_OPTION" "$SIDEBAR_KEY"
+    get_tmux_option "${VAR_PREFIX}-${SIDEBAR_KEY_OPTION}" "$SIDEBAR_KEY"
 }
 
 layout_key(){
-    get_tmux_option "$SIDEBAR_LAYOUT_OPTION" "$LAYOUT_KEY"
+    get_tmux_option "${VAR_PREFIX}-${SIDEBAR_LAYOUT_OPTION}" "$LAYOUT_KEY"
 }
 
 custom_layouts_dir() {
