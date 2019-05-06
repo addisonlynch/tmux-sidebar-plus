@@ -8,7 +8,7 @@ populate_sidebar() {
     tmux select-pane -t "$sidebar_id"
     if type -p "glances" > /dev/null; then
         command='glances'
-    if type -p "htop" > /dev/null; then
+    elif type -p "htop" > /dev/null; then
         command='htop'
     else
         command='top'

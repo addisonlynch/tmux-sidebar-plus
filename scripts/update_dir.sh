@@ -29,6 +29,7 @@ main_loop() {
     do
         clear
         check_directory_match
+        trap ' ' INT
         clear
         eval "${COMMAND}" 2>/dev/null || echo "Not a git repository"
         sleep 3

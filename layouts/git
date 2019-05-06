@@ -5,6 +5,7 @@ MINIMUM_WIDTH="80"
 populate_sidebar(){
     local sidebar_id="$1"
     tmux select-pane -t "$sidebar_id"
+    tmux resize-pane -t "$sidebar_id" -x "${MINIMUM_WIDTH}"
 
     # Build & register panes
     local pane_1_id="$(split "${sidebar_id}" "vertical")"
