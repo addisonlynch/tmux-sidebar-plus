@@ -11,9 +11,6 @@ SUPPORTED_TMUX_VERSION="1.9"
 SIDEBAR_KEY="b"
 SIDEBAR_KEY_OPTION="sidebar-key"
 
-LAYOUT_KEY="g"
-SIDEBAR_LAYOUT_OPTION="layout-key"
-
 SIDEBAR_ID="sidebar"
 SIDEBAR_ID_OPTION="sidebar-id"
 
@@ -36,12 +33,12 @@ DIRECTION=(
     [horizontal]="-h"
     [vertical]="-v"
 )
-
-TREE_COMMAND_OPTION="@-sidebar-tree-command"
-
 ###########
 # Layouts #
 ###########
+
+LAYOUT_KEY="g"
+SIDEBAR_LAYOUT_OPTION="layout-key"
 
 CUSTOM_LAYOUTS_DIR_OPTION="custom-layouts-dir"
 

@@ -1,17 +1,16 @@
 # tmux-sidebar-plus
 
-``tmux-sidebar-plus`` is a [tmux](https://github.com/tmux/tmux) plugin
-provides fast and flexible multi-window sidebar functionality.
+``tmux-sidebar-plus`` is a fast and flexible [tmux]
+(https://github.com/tmux/tmux) sidebar.
 
 ## Features
 
 Two convenient commands are provided:
 
-**Sidebar** - built on [tmux-sidebar](https://github.com/tmux-plugins/tmux-sidebar), the system information sidebar is available through the command ``C-o`` by default
+**Sidebar** - built on [tmux-sidebar]
+(https://github.com/tmux-plugins/tmux-sidebar), the system information sidebar
+is available through the command ``prefix-h`` by default
 
-## How It Works
-
-``tmux-system-monitor`` uses [Glances](https://nicolargo.github.io/glances/) to spawn a window or sidebar which helps monitor your computer.
 
 ## Installation
 
@@ -38,18 +37,40 @@ $ tmux source-file ~/.tmux.conf
 ## Configuration
 
 
+### tmux Options
+
 | option | default | description    |
 |-------|------|---|
-| ``@tmux-sidebar-plus-window-key``  | p | Set window toggle key |
-| ``@tmux-sidebar-plus-sidebar-key``  | o | Set sidebar toggle key |
-| ``@tmux-sidebar-plus-layout-dir`` | none | Additional layouts directory \
+| ``@sidebar-plus-sidebar-key``  | o | Set sidebar toggle key |
+| ``@sidebar-plus-layout-key`` | g | Set layout selection key |
+| ``@sidebar-plus-layout-dir`` | none | Additional layouts directory \
 
-## Custom Layouts
+
+## Layouts
+
+### Default Layouts
+
+A number of useful layouts are provided by ``tmux-sidebar-plus``, including:
+
+* ``default`` - system monitoring using [Glances](https://nicolargo.github.io/glances/),
+  [htop](https://hisham.hm/htop/), or [top](https://linux.die.net/man/1/top)
+* ``git`` - git status & log monitoring
+
+#### ``default``
+
+
+
+### Custom Layouts
 
 It is possible to override the default layouts by specifying a custom layout of
 the same name. ``tmux-sidebar-plus`` will then use the custom layout's
 configuration file.
 
-### Using ``update_dir.sh``
+#### Using ``update_dir.sh``
 
 The ``update_dir.sh`` script runs a command every 3 seconds.
+
+# To Do
+
+* Enhanced layout caching (by pane, window, and session)
+* Expanded default layouts (pull requests welcome)

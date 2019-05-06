@@ -55,17 +55,6 @@ get_value_from_option_name() {
     get_tmux_option "$option" ""
 }
 
-######################
-# Dependency checks
-
-glances_installed() {
-    type -p "glances" > /dev/null
-}
-
-htop_installed() {
-    type -p "htop" > /dev/null
-}
-
 ##############
 # tmux version
 

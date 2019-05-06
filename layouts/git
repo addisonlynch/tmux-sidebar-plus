@@ -10,12 +10,8 @@ populate_sidebar(){
     local pane_1_id="$(split "${sidebar_id}" "vertical")"
     register_pane $sidebar_id $pane_1_id
 
-    local pane_2_id="$(split "${pane_1_id}" "horizontal")"
-    register_pane $sidebar_id $pane_2_id
-
     # Run panes' commands
-    tmux send-keys -t $sidebar_id "top -c" Enter
-    watched_dir_command $pane_1_id "git status"
-    watched_dir_command $pane_2_id "git log --all --decorate --oneline --graph"
+    watched_dir_command $sidebar_id "git status"
+    watched_dir_command $pane_1_id "git log --all --decorate --oneline --graph"
     select_base_pane
 }
