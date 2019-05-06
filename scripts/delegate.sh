@@ -32,7 +32,7 @@ has_sidebar() {
 
 main() {
     if has_sidebar; then
-        tmux send-keys -t "${PANE_ID}" "$__dir/toggler.sh 'select_layout' '${PANE_ID}' 'default'" Enter
+        tmux send-keys -t "${PANE_ID}" "$__dir/toggler.sh 'select_layout' '${PANE_ID}' 'default' 'default'" Enter
     fi
     return 0
 }

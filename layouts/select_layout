@@ -1,6 +1,0 @@
-LAYOUT_NAME="select_layout"
-PANES=1
-MINIMUM_WIDTH="80"
-populate_sidebar() {
-    return
-}

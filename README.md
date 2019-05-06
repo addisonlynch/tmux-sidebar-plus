@@ -3,13 +3,45 @@
 ``tmux-sidebar-plus`` is a fast and flexible [tmux]
 (https://github.com/tmux/tmux) sidebar.
 
+An enhanced fork of [tmux-sidebar](https://github.com/tmux-plugins/tmux-sidebar),
+the system information sidebar is available through the command ``prefix-b`` by default.
+
+![tmux-sidebar-plus](/img/detailed_small.gif)
+
 ## Features
 
-Two convenient commands are provided:
 
-**Sidebar** - built on [tmux-sidebar]
-(https://github.com/tmux-plugins/tmux-sidebar), the system information sidebar
-is available through the command ``prefix-h`` by default
+``tmux-sidebar-plus`` adds the following features to ``tmux-sidebar``:
+
+- **multi-pane sidebar**<br/>
+  Allows for multiple panes in a variety of layouts.
+- **practical default layouts**</br>
+  Including system monitoring, git tracking
+- **easily-customizable commands**<br/>
+  Create simple configuration files to manually determine the layout of the
+  sidebar
+- **layout selection**<br/>
+  Select from a variety of default layouts, or a custom layout, using the
+  layout selector key (default prefix+g)
+
+
+On top of this, ``tmux-sidebar-plus`` folds in all the great features of
+``tmux-sidebar``:
+
+- **fast**<br/>
+  Much faster than doing each step manually.
+- **smart sizing**<br/>
+  Sidebar remembers its size, so the next time you open it, it will have the
+  **exact same** width. This is a per-directory property, so you can have just
+  the right size for multiple dirs.
+- **toggling**<br/>
+  The same key binding opens and closes the sidebar.
+- **uninterrupted workflow**<br/>
+  The main `prefix + Tab` key binding opens a sidebar but **does not** move
+  cursor to it.
+- **pane layout stays the same**<br/>
+  No matter which pane layout you prefer, sidebar tries hard not to mess your
+  pane splits. Open, then close the sidebar and everything should look the same.
 
 
 ## Installation
@@ -48,19 +80,17 @@ $ tmux source-file ~/.tmux.conf
 
 ## Layouts
 
-### Default Layouts
-
 A number of useful layouts are provided by ``tmux-sidebar-plus``, including:
 
 * ``default`` - system monitoring using [Glances](https://nicolargo.github.io/glances/),
   [htop](https://hisham.hm/htop/), or [top](https://linux.die.net/man/1/top)
 * ``git`` - git status & log monitoring
 
-#### ``default``
+### Default
 
 ![Default Layout](/img/default_small.gif)
 
-#### ``git``
+### Git
 
 ![Git Layout](/img/git_small.gif)
 
