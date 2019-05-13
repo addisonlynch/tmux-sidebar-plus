@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# ensure that 4 arguments were passed
-if [ $# -ne 4 ]; then
-    echo "Script requires 4 arguments"
-    exit 1
-fi
-
 __dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 __root_dir="$(dirname "$__dir")"
 
@@ -13,6 +7,8 @@ ARG="$1"
 PANE_ID="$2"
 L="$3"
 L_TYPE="$4"
+
+set -v
 
 source "${__dir}/helpers.sh"
 source "${__dir}/variables.sh"

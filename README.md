@@ -108,3 +108,15 @@ The ``update_dir.sh`` script runs a command every 3 seconds.
 
 * Enhanced layout caching (by pane, window, and session)
 * Expanded default layouts (pull requests welcome)
+
+
+## Testing
+
+This plugin uses the [tmux-test](https://github.com/tmux-plugins/tmux-test)
+framework as a test suite. All tests are located in the tests/ directory.
+
+### Requirements
+
+* Vagrant
+* virtualbox
+
