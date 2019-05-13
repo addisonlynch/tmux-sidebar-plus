@@ -25,24 +25,6 @@ the system information sidebar is available through the command ``prefix-b`` by 
   layout selector key (default prefix+g)
 
 
-On top of this, ``tmux-sidebar-plus`` folds in all the great features of
-``tmux-sidebar``:
-
-- **fast**<br/>
-  Much faster than doing each step manually.
-- **smart sizing**<br/>
-  Sidebar remembers its size, so the next time you open it, it will have the
-  **exact same** width. This is a per-directory property, so you can have just
-  the right size for multiple dirs.
-- **toggling**<br/>
-  The same key binding opens and closes the sidebar.
-- **uninterrupted workflow**<br/>
-  The main `prefix + Tab` key binding opens a sidebar but **does not** move
-  cursor to it.
-- **pane layout stays the same**<br/>
-  No matter which pane layout you prefer, sidebar tries hard not to mess your
-  pane splits. Open, then close the sidebar and everything should look the same.
-
 
 ## Installation
 
@@ -81,7 +63,9 @@ $ tmux source-file ~/.tmux.conf
 
 ## Basic Usage
 
-Open and close the sidebar using
+Open and close the sidebar using prefix-tab.
+
+Select your desired layout using prefix-g.
 
 
 ## Layouts
