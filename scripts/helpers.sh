@@ -39,6 +39,10 @@ custom_layouts_dir() {
     get_tmux_option "${VAR_PREFIX}-$CUSTOM_LAYOUTS_DIR_OPTION" ""
 }
 
+all_panes() {
+    get_tmux_option "${VAR_PREFIX}-${ALL_PANES_OPTION}"
+}
+
 ##############
 # tmux version
 

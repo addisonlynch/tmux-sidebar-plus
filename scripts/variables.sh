@@ -19,7 +19,7 @@ SIDEBAR_ID_OPTION="sidebar-id"
 
 REGISTERED_PANE_PREFIX="@-sidebar-registered-pane"
 
-ALL_PANES_PREFIX="@-sidebar-all-panes"
+ALL_PANES_OPTION="all-panes"
 SIDEBAR_PANES_LIST_PREFIX="@-sidebar-panes-sidebar"
 
 PANE_PARENT_PREFIX="@-sidebar-parent"

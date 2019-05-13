@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# ensure that 4 arguments were passed
-if [ $# -ne 4 ]; then
-    echo "Script requires 4 arguments"
-    exit 1
-fi
-
 __dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 __root_dir="$(dirname "$__dir")"
 
@@ -102,12 +96,12 @@ register_sidebar() {
 add_to_all_panes() {
     # Adds sidebar panes to the list of all sidebar panes
     local pane_id="$1"
-    local all_panes="$(get_tmux_option "${ALL_PANES_PREFIX}" "")"
+    local all_panes=$(all_panes)
     if [ -n "${all_panes}" ]; then
         all_panes+=" "
     fi
     all_panes+="${pane_id}"
-    set_tmux_option "${ALL_PANES_PREFIX}" "${all_panes}"
+    set_tmux_option "${VAR_PREFIX}-${ALL_PANES_OPTION}" "${all_panes}"
 }
 
 register_pane() {
@@ -190,16 +184,16 @@ kill_sidebar() {
 deregister_sidebar() {
     local sidebar_pane_id="$(sidebar_pane_id)"
     local sidebar_panes=$(get_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_pane_id}")
-    local all_panes=$(get_tmux_option "${ALL_PANES_PREFIX}")
+    local all_panes=$(all_panes)
     # remove child panes from all-panes
     for pane in "${sidebar_panes[@]}"; do
         all_panes=$(echo ${all_panes//"$pane"/})
-        set_tmux_option "${ALL_PANES_PREFIX}" "$all_panes"
+        set_tmux_option "${VAR_PREFIX}-${ALL_PANES_OPTION}" "$all_panes"
     done
 
     # remove main sidebar panes from all-panes
     all_panes=$(echo ${all_panes//${sidebar_pane_id}/})
-    set_tmux_option "${ALL_PANES_PREFIX}" "$all_panes"
+    set_tmux_option "${VAR_PREFIX}-${ALL_PANES_OPTION}" "$all_panes"
 
     unset_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}"
     unset_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_pane_id}"
@@ -283,7 +277,7 @@ execute_command_from_main_pane() {
 }
 
 current_pane_is_sidebar() {
-    local all_panes="$(get_tmux_option "${ALL_PANES_PREFIX}" "")"
+    local all_panes=$(all_panes)
     local retval=$(echo "${all_panes}" | grep "${PANE_ID}" | tr -d ' ')
     [ -n "${retval}" ]
 }
