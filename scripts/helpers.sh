@@ -40,7 +40,7 @@ custom_layouts_dir() {
 }
 
 all_panes() {
-    get_tmux_option "${VAR_PREFIX}-${ALL_PANES_OPTION}"
+    get_tmux_option "${ALL_PANES_OPTION}" ""
 }
 
 ##############

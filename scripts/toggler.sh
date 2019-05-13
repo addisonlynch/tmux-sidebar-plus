@@ -11,12 +11,10 @@ L_TYPE="$4"
 source "${__dir}/helpers.sh"
 source "${__dir}/variables.sh"
 
-readonly POSITION="left"   # "right"
-
 PANE_WIDTH="$(get_pane_info "$PANE_ID" "#{pane_width}")"
 readonly PANE_CURRENT_PATH="$(get_pane_info "$PANE_ID" "#{pane_current_path}")"
-
 readonly CUSTOM_LAYOUTS_DIR=$(custom_layouts_dir)
+readonly POSITION=$(get_tmux_option "${VAR_PREFIX}-${SIDEBAR_POSITION_OPTION}" "left")
 
 if [[ $L_TYPE == 'custom' ]]; then
     LAYOUT="${CUSTOM_LAYOUTS_DIR}/${L}"
@@ -101,7 +99,7 @@ add_to_all_panes() {
         all_panes+=" "
     fi
     all_panes+="${pane_id}"
-    set_tmux_option "${VAR_PREFIX}-${ALL_PANES_OPTION}" "${all_panes}"
+    set_tmux_option "${ALL_PANES_OPTION}" "${all_panes}"
 }
 
 register_pane() {
@@ -188,12 +186,12 @@ deregister_sidebar() {
     # remove child panes from all-panes
     for pane in "${sidebar_panes[@]}"; do
         all_panes=$(echo ${all_panes//"$pane"/})
-        set_tmux_option "${VAR_PREFIX}-${ALL_PANES_OPTION}" "$all_panes"
+        set_tmux_option "${ALL_PANES_OPTION}" "$all_panes"
     done
 
     # remove main sidebar panes from all-panes
     all_panes=$(echo ${all_panes//${sidebar_pane_id}/})
-    set_tmux_option "${VAR_PREFIX}-${ALL_PANES_OPTION}" "$all_panes"
+    set_tmux_option "${ALL_PANES_OPTION}" "$all_panes"
 
     unset_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}"
     unset_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_pane_id}"

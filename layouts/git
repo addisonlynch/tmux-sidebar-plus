@@ -1,6 +1,6 @@
 LAYOUT_NAME="git"
 PANES=3
-MINIMUM_WIDTH="80"
+MINIMUM_WIDTH="50"
 
 populate_sidebar(){
     local sidebar_id="$1"

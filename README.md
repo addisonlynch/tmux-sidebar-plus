@@ -75,7 +75,13 @@ $ tmux source-file ~/.tmux.conf
 |-------|------|---|
 | ``@sidebar-plus-sidebar-key``  | o | Set sidebar toggle key |
 | ``@sidebar-plus-layout-key`` | g | Set layout selection key |
-| ``@sidebar-plus-layout-dir`` | none | Additional layouts directory \
+| ``@sidebar-plus-layout-dir`` | none | Additional layouts directory |
+| ``@sidebar-plus-position`` | left | Desired sidebar position (left or right) \
+
+
+## Basic Usage
+
+Open and close the sidebar using
 
 
 ## Layouts

@@ -1,7 +1,7 @@
 ##########
 # Common #
 ##########
-VAR_PREFIX="@-sidebar-plus"
+VAR_PREFIX="@sidebar-plus"
 KEY_SUFFIX="key"
 SUPPORTED_TMUX_VERSION="1.9"
 
@@ -11,18 +11,20 @@ BASE_PANE_WIDTH_OPTION="@-sidebar-parent-width"
 ###########
 # Sidebar #
 ###########
-SIDEBAR_KEY="b"
+SIDEBAR_KEY="tab"
 SIDEBAR_KEY_OPTION="sidebar-key"
+
+SIDEBAR_POSITION_OPTION="sidebar-position"
 
 SIDEBAR_ID="sidebar"
 SIDEBAR_ID_OPTION="sidebar-id"
 
-REGISTERED_PANE_PREFIX="@-sidebar-registered-pane"
+REGISTERED_PANE_PREFIX="@-sidebar-plus-registered-pane"
 
-ALL_PANES_OPTION="all-panes"
-SIDEBAR_PANES_LIST_PREFIX="@-sidebar-panes-sidebar"
+ALL_PANES_OPTION="@-sidebar-plus-all-panes"
+SIDEBAR_PANES_LIST_PREFIX="@-sidebar-plus-panes-sidebar"
 
-PANE_PARENT_PREFIX="@-sidebar-parent"
+PANE_PARENT_PREFIX="@-sidebar-plus-sidebar-parent"
 
 MINIMUM_WIDTH_FOR_SIDEBAR="40"
 

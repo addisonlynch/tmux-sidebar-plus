@@ -1,18 +1,13 @@
 LAYOUT_NAME="default"
 PANES=1
-MINIMUM_WIDTH="80"
+MINIMUM_WIDTH="60"
 
-populate_sidebar() {
+populate_sidebar(){
     local sidebar_id="$1"
     local command
     tmux select-pane -t "$sidebar_id"
-    if type -p "glances" > /dev/null; then
-        command='glances'
-    elif type -p "htop" > /dev/null; then
-        command='htop'
-    else
-        command='top'
-    fi
-    tmux send-keys -t "${sidebar_id}" "${command}" Enter
+    tmux resize-pane -t "$sidebar_id" -x "${MINIMUM_WIDTH}"
+
+    tmux send-keys -t "${sidebar_id}" "ls | less" Enter
     select_base_pane
 }
