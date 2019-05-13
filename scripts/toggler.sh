@@ -165,8 +165,8 @@ split_sidebar_right() {
     tmux split-window -h -l "${sidebar_size}" -c "${PANE_CURRENT_PATH}" -P -F "#{pane_id}"
 }
 
-current_pane_width_not_changed() {
-    if [ "${PANE_WIDTH}" -eq $1 ]; then
+current_pane_width_mismatch() {
+    if [ "${PANE_WIDTH}" -eq "$1" ]; then
         return 0
     else
         return 1
@@ -176,36 +176,35 @@ current_pane_width_not_changed() {
 kill_sidebar() {
     # get data before killing the sidebar
     local sidebar_pane_id="$(sidebar_pane_id)"
+    local old_pane_width=$(get_tmux_option "${BASE_PANE_WIDTH_OPTION}-${PANE_ID}")
     # kill the sidebar's nested panes
     kill_child_panes
     # kill the sidebar
     tmux kill-pane -t "${sidebar_pane_id}"
-
-    # check current pane "expanded" properly
-    local new_current_pane_width="$(get_pane_info "${PANE_ID}" "#{pane_width}")"
-    if current_pane_width_not_changed "${new_current_pane_width}"; then
-        # need to expand current pane manually
-        local direction_flag
-        if [[ "${POSITION}" =~ "right" ]]; then
-            direction_flag="-R"
-        else
-            direction_flag="-L"
-        fi
-        # compensate 1 column
-        tmux resize-pane "${direction_flag}" "$((PANE_WIDTH + 1))"
-    fi
-    PANE_WIDTH="${new_current_pane_width}"
-
+    # compensate 1 column
+    tmux resize-pane -t "$PANE_ID" -x "$old_pane_width"
     # deregister the sidebar
     deregister_sidebar
 }
 
 deregister_sidebar() {
     local sidebar_pane_id="$(sidebar_pane_id)"
+    local sidebar_panes=$(get_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_pane_id}")
+    local all_panes=$(get_tmux_option "${ALL_PANES_PREFIX}")
+    # remove child panes from all-panes
+    for pane in "${sidebar_panes[@]}"; do
+        all_panes=$(echo ${all_panes//"$pane"/})
+        set_tmux_option "${ALL_PANES_PREFIX}" "$all_panes"
+    done
+
+    # remove main sidebar panes from all-panes
+    all_panes=$(echo ${all_panes//${sidebar_pane_id}/})
+    set_tmux_option "${ALL_PANES_PREFIX}" "$all_panes"
 
     unset_tmux_option "${REGISTERED_PANE_PREFIX}-${PANE_ID}"
     unset_tmux_option "${SIDEBAR_PANES_LIST_PREFIX}-${sidebar_pane_id}"
     unset_tmux_option "${PANE_PARENT_PREFIX}-${sidebar_pane_id}"
+    unset_tmux_option "${BASE_PANE_WIDTH_OPTION}-${PANE_ID}"
     # no need to remove from all-panes
 }
 
@@ -247,6 +246,9 @@ create_sidebar() {
         fi
         return
     fi
+    # store the parent width for use later
+    set_tmux_option "${BASE_PANE_WIDTH_OPTION}-${PANE_ID}" "${PANE_WIDTH}"
+
     local sidebar_id="$(split_sidebar_${position})"
     register_sidebar "${sidebar_id}"
     tmux last-pane

@@ -5,6 +5,9 @@ VAR_PREFIX="@-sidebar-plus"
 KEY_SUFFIX="key"
 SUPPORTED_TMUX_VERSION="1.9"
 
+# used to save pane width before sidebar creation
+BASE_PANE_WIDTH_OPTION="@-sidebar-parent-width"
+
 ###########
 # Sidebar #
 ###########
