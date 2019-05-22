@@ -55,15 +55,19 @@ $ tmux source-file ~/.tmux.conf
 
 | option | default | description    |
 |-------|------|---|
-| ``@sidebar-plus-sidebar-key``  | o | Set sidebar toggle key |
+| ``@sidebar-plus-sidebar-key``  | b | Set sidebar toggle key |
 | ``@sidebar-plus-layout-key`` | g | Set layout selection key |
 | ``@sidebar-plus-layout-dir`` | none | Additional layouts directory |
-| ``@sidebar-plus-position`` | left | Desired sidebar position (left or right) \
+| ``@sidebar-plus-position`` | left | Desired sidebar position (left or right)|
 
 
 ## Basic Usage
 
-Open and close the sidebar using prefix-tab.
+### Opening/Closing
+
+Open and close the sidebar using prefix-b.
+
+### Selecting a Layout
 
 Select your desired layout using prefix-g.
 
@@ -86,13 +90,48 @@ A number of useful layouts are provided by ``tmux-sidebar-plus``, including:
 
 ### Custom Layouts
 
+To add custom layouts, create a directory and set its absolute path to
+``@sidebar-plus-layout-dir``.
+
+#### Formatting
+
+The layout file should be named as desired and follow the below format:
+
+```bash
+LAYOUT_NAME="git"
+PANES=3
+MINIMUM_WIDTH="50"
+
+populate_sidebar(){
+    local sidebar_id="$1"
+    tmux select-pane -t "$sidebar_id"
+    tmux resize-pane -t "$sidebar_id" -x "${MINIMUM_WIDTH}"
+
+    # Build & register panes
+    local pane_1_id="$(split "${sidebar_id}" "vertical")"
+    register_pane $sidebar_id $pane_1_id
+
+    # Run panes' commands
+    watched_dir_command $sidebar_id "git status"
+    watched_dir_command $pane_1_id "git log --all --decorate --oneline --graph"
+    select_base_pane
+}
+
+```
+
+Where ``MINIMUM_WIDTH`` is the minimum width of the parent pane required to
+open the sidebar.
+
+#### Overriding Default Layouts
+
 It is possible to override the default layouts by specifying a custom layout of
 the same name. ``tmux-sidebar-plus`` will then use the custom layout's
 configuration file.
 
 #### Using ``update_dir.sh``
 
-The ``update_dir.sh`` script runs a command every 3 seconds.
+The ``update_dir.sh`` script runs a command every 3 seconds. This can be
+included in any custom layout.
 
 # To Do
 

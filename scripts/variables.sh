@@ -11,7 +11,7 @@ BASE_PANE_WIDTH_OPTION="@-sidebar-parent-width"
 ###########
 # Sidebar #
 ###########
-SIDEBAR_KEY="tab"
+SIDEBAR_KEY="b"
 SIDEBAR_KEY_OPTION="sidebar-key"
 
 SIDEBAR_POSITION_OPTION="sidebar-position"
