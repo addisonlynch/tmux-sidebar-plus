@@ -1,6 +1,6 @@
 # tmux-sidebar-plus
 
-*Proof of Concept*
+*Proof of Concept - tested for tmux >= 2.1*
 
 ``tmux-sidebar-plus`` is a fast and customizable multi-window
 [tmux](https://github.com/tmux/tmux) sidebar.
