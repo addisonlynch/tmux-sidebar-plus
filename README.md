@@ -1,5 +1,7 @@
 # tmux-sidebar-plus
 
+*Proof of Concept*
+
 ``tmux-sidebar-plus`` is a fast and customizable multi-window
 [tmux](https://github.com/tmux/tmux) sidebar.
 
@@ -133,7 +135,22 @@ configuration file.
 The ``update_dir.sh`` script runs a command every 3 seconds. This can be
 included in any custom layout.
 
-# To Do
+## To Do
 
 * Enhanced layout caching (by pane, window, and session)
 * Expanded default layouts (pull requests welcome)
+
+## Attribution
+
+tmux-sidebar-plus is an adapted implementation of [tmux-sidebar](https://github.com/tmux-plugins/tmux-sidebar/commits?author=bruno-) written by [Bruno Sutic](https://github.com/bruno-).
+
+## Contact
+
+Email: ahlshop@gmail.com
+Twitter: alynchfc
+
+## License
+
+Copyright © 2019 Addison Lynch
+
+See LICENSE for details
