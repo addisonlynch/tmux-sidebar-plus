@@ -327,7 +327,7 @@ select_menu() {
     # TODO: refactor
 
     # Get all default layouts
-    local DEFAULT_LAYOUTS=$(find "${__root_dir}/layouts" -type f -exec basename {} \;)
+    local DEFAULT_LAYOUTS=$(find -L "${__root_dir}/layouts" -type f -exec basename {} \;)
 
     local CUSTOM_LAYOUTS
     # If there is a custom layouts directory
